@@ -1,5 +1,5 @@
 import { Screen, Heading, Body, Card, ListItem } from "@garden/ui";
-import { useHeatmap } from "@/features/yield";
+import { useHeatmap } from "../hooks/use-sector-yield";
 
 const PLOT_ID = "plot-a";
 

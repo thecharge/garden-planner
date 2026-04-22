@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View } from "react-native";
 import { AutoCapitalize, Body, Button, ButtonMode, Caption, Card, TextInput } from "@garden/ui";
 import { InventoryKind, SummaryType } from "@garden/config";
-import { useSaveInventoryRecord } from "@/features/inventory";
+import { useSaveInventoryRecord } from "../hooks/use-inventory";
 
 const KIND_OPTIONS: ReadonlyArray<{ readonly label: string; readonly value: InventoryKind }> = [
   { label: "Seed", value: InventoryKind.Seed },

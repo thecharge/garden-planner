@@ -26,6 +26,21 @@ Your data never leaves your phone. The reasoning key is stored in the device sec
 
 The bottom bar has seven tabs. Tap an icon to switch.
 
+```mermaid
+flowchart LR
+    Capture -->|scan slope| Sectors
+    Sectors -->|open| Detail[Sector detail]
+    Detail -->|log harvest| Yield
+    Sectors --> Inventory
+    Detail -->|next year| Rotation
+    Detail -->|amendments + water| Nutrient
+    Settings
+    classDef tab fill:#A3C9A4,stroke:#3E6B45,color:#0F1F12
+    classDef screen fill:#E7DFD2,stroke:#3A3A3C,color:#1C1C1E
+    class Capture,Sectors,Yield,Rotation,Nutrient,Inventory,Settings tab
+    class Detail screen
+```
+
 1. **Capture** — point the camera at a slope to read topography. (Camera live preview lands in a later change; for now the tab guides you.)
 2. **Sectors** — beds, rows, greenhouses. Add, rename, delete.
 3. **Yield** — total kilograms grown per sector per year.
@@ -138,7 +153,27 @@ The plaintext key never appears in any list or page of the app after you save.
 
 ## Screenshots
 
-Screenshots of each flow live under [`docs/screenshots/`](docs/screenshots/). They are captured from the Pixel 9 emulator.
+Captured from the Pixel 9 emulator running the actual app:
+
+| Flow                                       | Screenshot                                                                   |
+| ------------------------------------------ | ---------------------------------------------------------------------------- |
+| Capture tab                                | ![Capture](docs/screenshots/00-capture-tab.png)                              |
+| Sectors — empty                            | ![Sectors empty](docs/screenshots/01-sectors-empty.png)                      |
+| Sector added                               | ![Sector added](docs/screenshots/02-sector-added.png)                        |
+| Empty-name rejection                       | ![Empty name rejected](docs/screenshots/16-sectors-empty-name-rejection.png) |
+| Sector detail (rename + harvest form)      | ![Sector detail](docs/screenshots/03-sector-detail.png)                      |
+| Harvest logged                             | ![Harvest logged](docs/screenshots/04-harvest-logged.png)                    |
+| Yield tab — 1.3 kg roll-up                 | ![Yield](docs/screenshots/05-yield-tab.png)                                  |
+| Inventory tab — empty                      | ![Inventory empty](docs/screenshots/06-inventory-empty.png)                  |
+| Inventory record form filled               | ![Record filled](docs/screenshots/07-inventory-record-form.png)              |
+| Recent records + events                    | ![Recent list](docs/screenshots/08-inventory-recent.png)                     |
+| Settings                                   | ![Settings](docs/screenshots/09-settings-initial.png)                        |
+| Anthropic key typed (secureTextEntry dots) | ![Key typed](docs/screenshots/10-settings-key-typed.png)                     |
+| Key saved (masked + Clear)                 | ![Key saved](docs/screenshots/11-settings-key-saved.png)                     |
+| Key cleared (back to paste state)          | ![Key cleared](docs/screenshots/15-settings-key-cleared.png)                 |
+| Theme — Dark pastel live-switch            | ![Dark pastel](docs/screenshots/12-theme-dark.png)                           |
+| Theme — High contrast AAA                  | ![AAA](docs/screenshots/13-theme-aaa.png)                                    |
+| Theme — Light pastel                       | ![Light pastel](docs/screenshots/14-theme-light.png)                         |
 
 ---
 

@@ -14,8 +14,9 @@ import {
 } from "@garden/ui";
 import { SummaryType } from "@garden/config";
 import { speciesCatalogue } from "@garden/engine";
-import { useDeleteSector, useRenameSector, useSector } from "@/features/sectors";
-import { HarvestForm, useHarvestsBySector } from "@/features/yield";
+import { useDeleteSector, useRenameSector, useSector } from "../hooks/use-sectors";
+import { HarvestForm } from "@/features/yield/components/harvest-form";
+import { useHarvestsBySector } from "@/features/yield/hooks/use-sector-yield";
 
 const PLOT_ID = "plot-a";
 

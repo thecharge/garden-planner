@@ -146,13 +146,12 @@ The system SHALL configure a single `QueryClient` in `src/core/query/`, exportin
 
 ### Requirement: Root layout provider order
 
-`apps/mobile/app/_layout.tsx` SHALL wrap the app tree in this exact provider order, outside → in: `GestureHandlerRootView` → `SafeAreaProvider` → `SettingsThemeProvider` (the app-side wrapper that subscribes to `settingsStore.themeId` and forwards it to `@garden/ui`'s `ThemeProvider`) → `QueryProvider`. The root layout file stays ≤30 lines per the existing `app/` thin-glue rule. `@garden/ui`'s `ThemeProvider` MAY also be used directly with an explicit `themeId` prop (e.g., in tests).
+`apps/mobile/app/_layout.tsx` SHALL wrap the app tree in this exact provider order, outside → in: `GestureHandlerRootView` → `SafeAreaProvider` → `ThemeProvider` (from `@garden/ui`, which hosts `PaperProvider` + exposes token context) → `QueryProvider`. The root layout file stays ≤30 lines per the existing `app/` thin-glue rule.
 
 #### Scenario: Providers mount in the expected order
 
 - **WHEN** `_layout.tsx` renders
 - **THEN** the rendered tree MUST include each of the four providers in order
-- **AND** `SettingsThemeProvider` MUST wrap `@garden/ui`'s `ThemeProvider` internally so theme changes in the settings store re-render the subtree
 - **AND** no feature-level imports (e.g., `@garden/memory`, `@garden/engine`) MUST appear in `app/_layout.tsx`
 
 ### Requirement: Bottom-tab navigation via expo-router `Tabs`
@@ -190,7 +189,7 @@ The app SHALL expose a `/sector/[id]` route at `apps/mobile/app/sector/[id].tsx`
 
 ### Requirement: Theme live-switch follows the settings store
 
-Flipping the active theme in Settings SHALL re-render every mounted screen with the new token palette without a cold restart. The canonical wiring is a thin app-side component (`SettingsThemeProvider` in `apps/mobile/src/core/theme/`) that subscribes to `settingsStore.themeId` via a `zustand` React binding (`useStore`) and passes the current id into `@garden/ui`'s `ThemeProvider` as its `themeId` prop. The root `app/_layout.tsx` MUST compose this wrapper so the app theme always follows the store. `@garden/ui`'s `ThemeProvider` MUST NOT take a runtime dependency on the mobile settings store — the coupling lives in the app layer only.
+Flipping the active theme in Settings SHALL re-render every mounted screen with the new token palette without a cold restart. The canonical wiring is a thin app-side component (e.g. `SettingsThemeProvider` in `apps/mobile/src/core/theme/`) that subscribes to `settingsStore.themeId` via a `zustand` React binding and passes the current id into `@garden/ui`'s `ThemeProvider` as its `themeId` prop. The root `app/_layout.tsx` MUST compose this wrapper so the app theme always follows the store. `@garden/ui`'s `ThemeProvider` MUST NOT take a runtime dependency on the mobile settings store.
 
 #### Scenario: Theme flips live from Settings
 

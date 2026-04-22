@@ -5,6 +5,7 @@ BYOK
 callsites
 carota
 cmdline
+CORELIB
 COEF
 collab
 colours
@@ -27,6 +28,7 @@ LOOKBACK
 macronutrients
 neighbour
 neighbours
+NREPO
 normalised
 Normalised
 NRCS
@@ -36,6 +38,7 @@ penalise
 penalises
 Penetrometer
 pepo
+pkgs
 Pereira
 prefs
 Pressable

@@ -4,8 +4,23 @@ Developer-facing narrative. Reads top to bottom. Use it to get the mental model 
 
 ## The chain
 
-```
-capture → verdict → sector → sow → harvest → rotation → nutrient
+```mermaid
+flowchart LR
+    C[Capture<br/>camera + sensors] --> V[Verdict<br/>Sofia compliance]
+    V --> S[Sector<br/>bed / row / zone]
+    S --> O[Sow<br/>garden event]
+    S --> H[Harvest<br/>weightGrams]
+    H --> Y[Yield tab<br/>heatmap]
+    O --> R[Rotation<br/>next year]
+    H --> N[Nutrient<br/>amendments + water]
+    S --> R
+    S --> N
+    classDef capture fill:#A3C9A4,stroke:#3E6B45,color:#0F1F12
+    classDef data fill:#E7DFD2,stroke:#3A3A3C,color:#1C1C1E
+    classDef view fill:#C5B2D6,stroke:#5A4A6F,color:#1A1023
+    class C,V capture
+    class S,O,H data
+    class Y,R,N view
 ```
 
 Each step writes exactly one row to the right table. The next step reads that row. Nothing is coupled through globals; every hop is a repository call on `MemoryRepository` (see `@garden/memory`).
@@ -145,6 +160,25 @@ type Harvest = {
 
 **Read path:** the Yield tab's `useHeatmap` calls `@garden/engine`'s `heatmapData(repo, plotId, year)`, which sums `listHarvestsBySector` across every sector in the plot.
 
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant F as HarvestForm
+    participant M as useAppendHarvest
+    participant R as MemoryRepository
+    participant Q as QueryClient
+    participant Y as Yield tab
+
+    U->>F: pick species + type grams + Submit
+    F->>F: validate (grams > 0, species picked)
+    F->>M: mutate({ sectorId, speciesId, weightGrams, harvestedAt })
+    M->>R: appendHarvest(h)
+    R-->>M: ok
+    M->>Q: invalidate ["harvests", sectorId] / ["heatmap"] / ["yield", sectorId]
+    Q-->>Y: refetch heatmapData
+    Y-->>U: new row visible without restart
+```
+
 ---
 
 ## 6. Rotation
@@ -182,15 +216,45 @@ No string-literal unions in the codebase — reasons are `const RotationReasonCo
 
 ## What layer handles what
 
-```
-app/ (≤30 lines each, thin glue)
-└── apps/mobile/src/features/*        feature silos (components + hooks + store + index.ts)
-    └── apps/mobile/src/core/*        cross-feature wiring (query client, logger, theme, i18n)
-        └── @garden/ui                theme tokens, primitives, announce() contract
-            └── @garden/engine        science: compliance, rotation, nutrient
-                └── @garden/memory    MemoryRepository
-                    └── @garden/core  pure data types (Protocol, Summary, …)
-                        └── @garden/config  enums, SmepErrors, SpatialLimits
+```mermaid
+flowchart TB
+    subgraph app["app/ — Expo Router (≤30 lines/file, thin glue)"]
+        L[_layout.tsx]
+        T["(tabs)/*"]
+        D["sector/[id].tsx"]
+    end
+    subgraph features["apps/mobile/src/features/* — FSD silos"]
+        FS[sectors]
+        FY[yield]
+        FI[inventory]
+        FST[settings]
+    end
+    subgraph core["apps/mobile/src/core/*"]
+        CC[query client]
+        CL[logger]
+        CT[theme bridge]
+        CI[i18n]
+    end
+    UI["@garden/ui — tokens + primitives + announce()"]
+    ENG["@garden/engine — compliance / rotation / nutrient"]
+    MEM["@garden/memory — MemoryRepository"]
+    COR["@garden/core — Protocol / Summary"]
+    CONF["@garden/config — enums / SmepErrors / SpatialLimits"]
+
+    app --> features
+    features --> core
+    features --> UI
+    core --> UI
+    features --> ENG
+    ENG --> MEM
+    MEM --> COR
+    COR --> CONF
+    UI --> CONF
+
+    classDef pure fill:#E7DFD2,stroke:#3A3A3C,color:#1C1C1E
+    classDef device fill:#A3C9A4,stroke:#3E6B45,color:#0F1F12
+    class CONF,COR,MEM,ENG pure
+    class app,features,core,UI device
 ```
 
 Rule: each layer only imports down and sideways within the same layer. The four pure packages (`config`, `core`, `memory`, `engine`) contain **zero React Native / Expo imports** — enforced by ESLint.
@@ -198,6 +262,25 @@ Rule: each layer only imports down and sideways within the same layer. The four 
 ---
 
 ## Where data lives
+
+```mermaid
+flowchart LR
+    subgraph device["Device runtime (apps/mobile)"]
+        APP[Feature hooks]
+        REPO["core/query/repository.ts<br/>pure-JS in-memory"]
+        SS["expo-secure-store<br/>anthropic_api_key"]
+    end
+    subgraph node["Node tests / future device"]
+        NREPO["@garden/memory<br/>better-sqlite3 / expo-sqlite"]
+    end
+    APP -->|getMemoryRepository| REPO
+    APP -->|useAnthropicKey| SS
+    NREPO -.planned.-> REPO
+    classDef device fill:#A3C9A4,stroke:#3E6B45,color:#0F1F12
+    classDef node fill:#E7DFD2,stroke:#3A3A3C,color:#1C1C1E
+    class APP,REPO,SS device
+    class NREPO node
+```
 
 - **On device now:** pure-JS in-memory `MemoryRepository` in `apps/mobile/src/core/query/repository.ts`. Every `MemoryRepository` call hits a `Map` or a plain array. Data is lost on app reinstall.
 - **Future:** `make-device-sqlite-adapter` change wires `expo-sqlite` with the same migrations the Node test adapter uses today.

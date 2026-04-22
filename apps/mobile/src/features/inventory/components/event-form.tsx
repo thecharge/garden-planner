@@ -4,8 +4,8 @@ import { router } from "expo-router";
 import { Body, Button, ButtonMode, Caption, Card, TextInput } from "@garden/ui";
 import { EventKind, SummaryType } from "@garden/config";
 import { speciesCatalogue } from "@garden/engine";
-import { useAppendEvent } from "@/features/inventory";
-import { useSectors } from "@/features/sectors";
+import { useAppendEvent } from "../hooks/use-inventory";
+import { useSectors } from "@/features/sectors/hooks/use-sectors";
 
 const PLOT_ID = "plot-a";
 

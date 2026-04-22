@@ -79,28 +79,20 @@ The system SHALL persist `Sector`, `Harvest`, and `SoilSample` records through `
 - **THEN** it MUST be retrievable by whichever linkage was provided
 - **AND** it MUST carry at minimum `pH`, `texture`, and `capturedAt` when persisted
 
-### Requirement: Sector rename and delete on `MemoryRepository`
+### Requirement: `MemoryRepository.deleteSector`
 
-The `MemoryRepository` interface in `@garden/memory` SHALL expose `renameSector(id: string, name: string): Promise<void>` and `deleteSector(id: string): Promise<void>`. Both adapters MUST implement them:
+The `MemoryRepository` interface in `@garden/memory` SHALL expose a `deleteSector(id: string): Promise<void>` method. Both adapters MUST implement it:
 
-- **Node adapter (better-sqlite3)**: `renameSector` MUST run `UPDATE sectors SET name = ? WHERE id = ?`. `deleteSector` MUST run `DELETE FROM sectors WHERE id = ?` and return successfully even if no rows matched.
-- **Mobile in-memory adapter**: `renameSector` MUST replace the `Map` entry for `id` with `{ ...existing, name }` and silently no-op when the id is absent. `deleteSector` MUST delete the entry and silently no-op when absent.
+- **Node adapter (better-sqlite3)**: MUST run `DELETE FROM sectors WHERE id = ?` and return successfully even if no rows matched.
+- **Mobile in-memory adapter**: MUST delete the sector from its backing `Map` and return successfully even if the id was absent (idempotent).
 
-Cascading behaviour is out of scope for now — harvest and event rows keyed to a deleted sector id remain in the store, and the UI MUST filter them out when presenting sector-scoped history.
-
-#### Scenario: Rename a sector in place
-
-- **GIVEN** a repository with a sector `s-1` named `North bed`
-- **WHEN** `repository.renameSector('s-1', 'Greenhouse')` is awaited
-- **THEN** `repository.getSector('s-1').name` MUST be `'Greenhouse'`
-- **AND** the `id` MUST remain stable so harvest rows stay attached
+Cascading behaviour is out of scope for this change — harvest and event rows keyed to the deleted sector id remain in the store, and the UI MUST filter them out when presenting sector-scoped history. A follow-up change MAY introduce cascade semantics.
 
 #### Scenario: Delete an existing sector
 
 - **GIVEN** a repository with a sector `s-1`
 - **WHEN** `repository.deleteSector('s-1')` is awaited
-- **THEN** `repository.getSector('s-1')` MUST resolve to `undefined`
-- **AND** `repository.listSectorsByPlot(...)` MUST NOT include `s-1`
+- **THEN** `repository.listSectors()` MUST NOT include `s-1`
 
 #### Scenario: Delete a missing sector is a no-op
 
@@ -108,15 +100,9 @@ Cascading behaviour is out of scope for now — harvest and event rows keyed to 
 - **WHEN** `repository.deleteSector('s-missing')` is awaited
 - **THEN** the call MUST resolve without throwing
 
-### Requirement: `listInventoryRecords` on `MemoryRepository`
+#### Scenario: Harvest rows survive deletion for now
 
-The `MemoryRepository` interface SHALL expose `listInventoryRecords(): Promise<ReadonlyArray<InventoryRecord>>` returning every stored record ordered by `acquiredAt` descending.
-
-- **Node adapter**: `SELECT * FROM inventory_records ORDER BY acquired_at DESC`.
-- **Mobile in-memory adapter**: `Array.from(map.values()).sort((a, b) => a.acquiredAt < b.acquiredAt ? 1 : -1)`.
-
-#### Scenario: Most-recent record first
-
-- **GIVEN** three inventory records saved in order at `t=1`, `t=3`, `t=2`
-- **WHEN** `listInventoryRecords()` is awaited
-- **THEN** the result MUST be ordered `[t=3, t=2, t=1]`
+- **GIVEN** a sector `s-1` with one harvest row
+- **WHEN** `repository.deleteSector('s-1')` is awaited
+- **THEN** `repository.listHarvests()` MAY still contain the orphaned row
+- **AND** the Sectors UI MUST NOT display orphaned harvests on any remaining sector

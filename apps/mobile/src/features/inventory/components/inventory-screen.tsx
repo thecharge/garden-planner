@@ -1,5 +1,7 @@
 import { Screen, Heading, Body, Card, ListItem } from "@garden/ui";
-import { EventForm, RecordForm, useEventsInRange, useInventory } from "@/features/inventory";
+import { EventForm } from "./event-form";
+import { RecordForm } from "./record-form";
+import { useEventsInRange, useInventory } from "../hooks/use-inventory";
 
 const yearRange = (): { readonly fromIso: string; readonly toIso: string } => {
   const now = new Date();

@@ -13,7 +13,7 @@ import {
   TextInput
 } from "@garden/ui";
 import { SummaryType } from "@garden/config";
-import { useSaveSector, useSectors } from "@/features/sectors";
+import { useSaveSector, useSectors } from "../hooks/use-sectors";
 
 const PLOT_ID = "plot-a";
 

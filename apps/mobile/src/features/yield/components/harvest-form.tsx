@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Body, Button, ButtonMode, Caption, Card, TextInput } from "@garden/ui";
 import { SummaryType } from "@garden/config";
 import { speciesCatalogue } from "@garden/engine";
-import { useAppendHarvest } from "@/features/yield";
+import { useAppendHarvest } from "../hooks/use-sector-yield";
 
 export type HarvestFormProps = {
   readonly sectorId: string;
