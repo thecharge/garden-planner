@@ -2,23 +2,60 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM"],
-    "types": ["node", "jest"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [
+      "node",
+      "jest"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@garden/config": ["../../packages/config/src/index.ts"],
-      "@garden/config/*": ["../../packages/config/src/*"],
-      "@garden/core": ["../../packages/core/src/index.ts"],
-      "@garden/core/*": ["../../packages/core/src/*"],
-      "@garden/memory": ["../../packages/memory/src/index.ts"],
-      "@garden/memory/*": ["../../packages/memory/src/*"],
-      "@garden/engine": ["../../packages/engine/src/index.ts"],
-      "@garden/engine/*": ["../../packages/engine/src/*"],
-      "@garden/ui": ["../../packages/ui/src/index.ts"],
-      "@garden/ui/*": ["../../packages/ui/src/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@garden/config": [
+        "../../packages/config/src/index.ts"
+      ],
+      "@garden/config/*": [
+        "../../packages/config/src/*"
+      ],
+      "@garden/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@garden/core/*": [
+        "../../packages/core/src/*"
+      ],
+      "@garden/memory": [
+        "../../packages/memory/src/index.ts"
+      ],
+      "@garden/memory/*": [
+        "../../packages/memory/src/*"
+      ],
+      "@garden/engine": [
+        "../../packages/engine/src/index.ts"
+      ],
+      "@garden/engine/*": [
+        "../../packages/engine/src/*"
+      ],
+      "@garden/ui": [
+        "../../packages/ui/src/index.ts"
+      ],
+      "@garden/ui/*": [
+        "../../packages/ui/src/*"
+      ]
     }
   },
-  "include": ["src/**/*", "app/**/*"],
-  "exclude": ["node_modules", ".expo", "dist"]
+  "include": [
+    "src/**/*",
+    "app/**/*",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".expo",
+    "dist"
+  ]
 }

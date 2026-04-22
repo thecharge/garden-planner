@@ -39,6 +39,7 @@ psychrometric
 Raes
 Riotte
 sdkmanager
+SEMERU
 Truog
 unpermitted
 UNPERMITTED

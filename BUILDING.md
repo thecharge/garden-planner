@@ -149,6 +149,22 @@ pnpm --filter apps-mobile run apk
 4. `adb install android/app/build/outputs/apk/release/app-release.apk`
 5. Open the app and follow `QUICKSTART.md` from "Step 10 — First boundary walk" onwards.
 
+## Version matrix (verified)
+
+This is the **known-working** pair set for Expo SDK 55. Do not freelance these.
+
+| Component | Pinned version | Reason |
+| --- | --- | --- |
+| Expo SDK | 55.0.16 | Set in `apps/mobile/package.json`. |
+| `react-native` | **0.83.6** | Expo 55 is built against 0.83.6. RN 0.85.x breaks `expo-modules-core`'s `Promise.kt` override. |
+| Gradle wrapper | **8.14.3** | 9.0.0 removes `JvmVendorSpec.IBM_SEMERU` which `foojay-resolver-convention@0.5.0` (pinned by `@react-native/gradle-plugin@0.83.6`) still references. |
+| JDK | 21 (JBR from Android Studio snap) | 17+ required by AGP 8.x; 21 tested. |
+| Android SDK platform | 35 | `app.json` `android.package` targets it. |
+| Build tools | 35.0.0 | |
+| System image | `system-images;android-35;google_apis;x86_64` | |
+| NDK | 27.1.12297006 | Resolved automatically by AGP. |
+| CMake | 3.22.1 | Used by Skia + Reanimated native builds. |
+
 ## Troubleshooting
 
 ### `expo start` complains about missing Reanimated plugin
@@ -158,6 +174,32 @@ pnpm --filter apps-mobile run apk
 ### Gradle fails with Kotlin / JDK mismatch
 
 AGP 8.x requires JDK 17+. JDK 21 works; JDK 8 or 11 does not. Re-run Step 1.
+
+### `JvmVendorSpec does not have member field 'IBM_SEMERU'`
+
+Gradle 9.0 dropped the `IBM_SEMERU` enum constant. The `foojay-resolver-convention@0.5.0` plugin bundled with `@react-native/gradle-plugin@0.83.x` references it. Fix: pin the wrapper to **Gradle 8.14.3**:
+
+```bash
+# Edit apps/mobile/android/gradle/wrapper/gradle-wrapper.properties:
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.14.3-bin.zip
+```
+
+Note: `expo prebuild` regenerates `android/`, including the wrapper properties. After every prebuild, re-apply this pin or run `gradlew` directly (bypasses prebuild).
+
+### `e: ... Promise.kt: 'reject' overrides nothing`
+
+`expo-modules-core@55.0.23`'s `Promise.kt` overrides a signature that changed in `react-native@0.85.x`. Keep `react-native` pinned at `0.83.6` per the version matrix above.
+
+### `ERROR: Skia prebuilt binaries not found!` from `@shopify/react-native-skia`
+
+`@shopify/react-native-skia`'s `postinstall` (`scripts/install-libs.js`) copies the prebuilt native libs from `react-native-skia-android` into `libs/android/`. If the copy didn't run (pnpm sometimes skips it), trigger it manually:
+
+```bash
+SKIA_DIR=$(find node_modules/.pnpm -maxdepth 2 -type d -name "@shopify+react-native-skia@*" | head -1)
+cd "$SKIA_DIR/node_modules/@shopify/react-native-skia" && node scripts/install-libs.js
+```
+
+The repo's `pnpm-workspace.yaml` already lists `@shopify/react-native-skia` under `onlyBuiltDependencies` so a fresh `pnpm install` should run this automatically.
 
 ### `node-gyp` error when installing `better-sqlite3` on Node 24
 
