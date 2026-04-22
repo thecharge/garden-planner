@@ -1,6 +1,5 @@
 import { createStore } from "zustand/vanilla";
-import type { FontFamily } from "@garden/config";
-import type { ThemeId } from "@garden/ui";
+import type { FontFamily, ThemeId } from "@garden/config";
 import { config } from "@/core/config";
 
 export const CaptionsMode = {

@@ -179,7 +179,14 @@ module.exports = {
     {
       // Tests relax a few rules to keep it.each tables readable, and exempt
       // narrow tuple types like `"sector" | "pin"` that are test-local.
-      files: ["**/__tests__/**/*.ts", "**/*.test.ts", "**/*.spec.ts"],
+      files: [
+        "**/__tests__/**/*.ts",
+        "**/__tests__/**/*.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx"
+      ],
       rules: {
         "max-lines": "off",
         "max-nested-callbacks": ["error", 4],

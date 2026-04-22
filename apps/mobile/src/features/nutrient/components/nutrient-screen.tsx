@@ -1,4 +1,5 @@
-import { View, Text } from "react-native";
+import { GrowthStage } from "@garden/config";
+import { Screen, Heading, Body, Card, Caption } from "@garden/ui";
 import { useIrrigationTarget } from "@/features/nutrient";
 
 const dayOfYear = (): number => {
@@ -8,13 +9,28 @@ const dayOfYear = (): number => {
 };
 
 export const NutrientScreen = () => {
-  const water = useIrrigationTarget("tomato-san-marzano", "mid-season", dayOfYear());
+  const water = useIrrigationTarget("tomato-san-marzano", GrowthStage.MidSeason, dayOfYear());
+
   return (
-    <View accessibilityLabel="Nutrient screen" style={{ flex: 1 }}>
-      <Text accessibilityRole="header">Amendments and irrigation</Text>
-      <Text>
-        {water.isLoading ? "Loading…" : `${water.data?.mmPerWeek ?? 0} mm / week`}
-      </Text>
-    </View>
+    <Screen accessibilityLabel="Nutrient screen">
+      <Heading>Amendments and irrigation</Heading>
+      <Body muted>For tomato (mid-season) — Sofia basin fallback climatology.</Body>
+      <Card accessibilityLabel="Irrigation target card">
+        <Body>Weekly irrigation target</Body>
+        <Heading>{water.data ? `${water.data.mmPerWeek.toFixed(1)} mm / week` : "…"}</Heading>
+        <Body muted>
+          {water.data
+            ? `ET₀ ${water.data.et0MmPerDay.toFixed(2)} mm/day · Kc ${water.data.kc.toFixed(2)}`
+            : "Loading…"}
+        </Body>
+      </Card>
+      {water.data?.warning ? <Caption>{water.data.warning.message}</Caption> : null}
+      <Card accessibilityLabel="Amendments placeholder">
+        <Body>Amendments</Body>
+        <Body muted>
+          Log a soil sample on the Sectors tab and a Liebig-limiting amendment plan shows up here.
+        </Body>
+      </Card>
+    </Screen>
   );
 };

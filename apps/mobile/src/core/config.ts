@@ -1,5 +1,4 @@
-import { ANTHROPIC_MODEL_ID, FontFamily } from "@garden/config";
-import { ThemeId } from "@garden/ui";
+import { ANTHROPIC_MODEL_ID, FontFamily, ThemeId } from "@garden/config";
 import { LogLevel } from "@/core/log-level";
 
 /** The single source of truth for every app runtime constant.

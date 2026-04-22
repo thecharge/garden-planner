@@ -110,3 +110,13 @@ export const FontFamily = {
   OpenDyslexic: "OpenDyslexic"
 } as const;
 export type FontFamily = (typeof FontFamily)[keyof typeof FontFamily];
+
+/** Theme identifiers. Shared cross-package so feature code can switch themes
+ * without importing from `@garden/ui` (which pulls in Paper at module-load time).
+ */
+export const ThemeId = {
+  LightPastel: "light-pastel",
+  DarkPastel: "dark-pastel",
+  HighContrast: "high-contrast"
+} as const;
+export type ThemeId = (typeof ThemeId)[keyof typeof ThemeId];

@@ -6,12 +6,21 @@
     "orientation": "portrait",
     "platforms": ["android"],
     "scheme": "gardenplanner",
+    "backgroundColor": "#F6F3EE",
+    "userInterfaceStyle": "light",
     "plugins": [
       "expo-router",
       "expo-camera",
       "expo-location",
       "expo-sqlite",
       "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F6F3EE",
+          "resizeMode": "contain"
+        }
+      ],
       [
         "expo-font",
         {
@@ -25,6 +34,10 @@
     ],
     "android": {
       "package": "com.chepinci.gardenplanner",
+      "backgroundColor": "#F6F3EE",
+      "adaptiveIcon": {
+        "backgroundColor": "#F6F3EE"
+      },
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",

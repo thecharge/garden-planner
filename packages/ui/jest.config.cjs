@@ -1,5 +1,12 @@
+const base = require("../../jest.preset.cjs");
+
 module.exports = {
-  ...require("../../jest.preset.cjs"),
+  ...base,
   displayName: "@garden/ui",
-  testEnvironment: "node"
+  testEnvironment: "node",
+  moduleNameMapper: {
+    ...base.moduleNameMapper,
+    "^react-native$": "<rootDir>/src/__mocks__/react-native.tsx",
+    "^react-native-safe-area-context$": "<rootDir>/src/__mocks__/react-native-safe-area-context.tsx"
+  }
 };

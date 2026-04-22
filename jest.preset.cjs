@@ -2,7 +2,12 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/__tests__/**/*.test.ts", "**/*.test.ts"],
+  testMatch: [
+    "**/__tests__/**/*.test.ts",
+    "**/__tests__/**/*.test.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
   moduleNameMapper: {
     "^@garden/config$": "<rootDir>/../config/src/index.ts",
     "^@garden/config/(.*)$": "<rootDir>/../config/src/$1",
@@ -13,8 +18,14 @@ module.exports = {
     "^@garden/engine$": "<rootDir>/../engine/src/index.ts",
     "^@garden/engine/(.*)$": "<rootDir>/../engine/src/$1"
   },
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.d.ts", "!src/index.ts"],
-  coverageReporters: ["text", "lcov"],
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/*.d.ts",
+    "!src/index.ts",
+    "!src/__mocks__/**"
+  ],
+  coverageReporters: ["text", "lcov", "html"],
   clearMocks: true,
   restoreMocks: true
 };

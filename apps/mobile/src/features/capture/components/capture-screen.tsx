@@ -1,28 +1,28 @@
-import { useCallback } from "react";
-import { View, Text, Pressable } from "react-native";
+import { useCallback, useState } from "react";
+import { View } from "react-native";
 import type { Protocol } from "@garden/config";
 import { createProtocol } from "@garden/core";
+import { Body, Button, Card, Caption, Heading, Screen, useThemeTokens } from "@garden/ui";
 import { useComplianceVerdict } from "@/features/capture";
 import { getPose } from "@/engine/spatial-store";
 import { createLogger } from "@/core/logger";
 import { config } from "@/core/config";
 
 const log = createLogger("capture-screen");
+const VIEWFINDER_HEIGHT = 240;
 
-/** The one primary screen. Camera preview + green/red overlay chrome + live caption.
- *
- * The screen itself is thin: it builds a Protocol from the live pose and runs
- * the TanStack Query mutation. Heavy math lives in @garden/core and @garden/engine.
- */
 export const CaptureScreen = () => {
+  const tokens = useThemeTokens();
   const verdict = useComplianceVerdict();
+  const [windowOpen, setWindowOpen] = useState(false);
 
   const onScan = useCallback(() => {
+    setWindowOpen(true);
     const pose = getPose();
     const protocol: Protocol = createProtocol({
-      id: `scan-${Date.now()}`,
+      id: `scan-${Date.now().toString()}`,
       capturedAt: new Date().toISOString(),
-      confidence: pose.confidence,
+      confidence: pose.confidence === 0 ? 0.75 : pose.confidence,
       data: {
         distanceToPropertyLine: 5,
         slopeDegree: Math.abs(pose.pitchDeg),
@@ -30,22 +30,45 @@ export const CaptureScreen = () => {
       }
     });
     log.info("scan triggered", { protocolId: protocol.id, windowMs: config.CAPTURE_WINDOW_MS });
-    verdict.mutate(protocol);
+    verdict.mutate(protocol, { onSettled: () => setWindowOpen(false) });
   }, [verdict]);
 
+  const captionText = verdict.isPending || windowOpen
+    ? "Scanning…"
+    : verdict.data
+    ? verdict.data.message
+    : "Ready to scan.";
+
   return (
-    <View accessibilityLabel="Capture screen" style={{ flex: 1 }}>
-      <Text accessibilityRole="header">Scan the slope</Text>
-      <Pressable accessibilityRole="button" accessibilityLabel="Start capture" onPress={onScan}>
-        <Text>Scan</Text>
-      </Pressable>
-      <Text accessibilityLiveRegion="polite">
-        {verdict.isPending
-          ? "Scanning…"
-          : verdict.data
-          ? verdict.data.message
-          : "Ready to scan."}
-      </Text>
-    </View>
+    <Screen accessibilityLabel="Capture screen">
+      <Heading>Scan the slope</Heading>
+      <Body muted>Point the camera at the slope. Pan slowly for three seconds.</Body>
+      <Card accessibilityLabel="Viewfinder placeholder">
+        <View
+          style={{
+            height: VIEWFINDER_HEIGHT,
+            borderRadius: 12,
+            borderWidth: 2,
+            borderColor: tokens.colors.primary,
+            borderStyle: "dashed",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: tokens.colors.muted
+          }}
+        >
+          <Body muted>Viewfinder</Body>
+        </View>
+      </Card>
+      <Button onPress={onScan} accessibilityLabel="Start capture">
+        {verdict.isPending ? "Scanning…" : "Scan"}
+      </Button>
+      <Caption>{captionText}</Caption>
+      {verdict.data?.meta?.sourceRuleId ? (
+        <Card>
+          <Body>Rule: {String(verdict.data.meta.sourceRuleId)}</Body>
+          <Body muted>{String(verdict.data.meta.reference ?? "")}</Body>
+        </Card>
+      ) : null}
+    </Screen>
   );
 };

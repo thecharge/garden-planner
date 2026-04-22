@@ -1,5 +1,5 @@
-import { AA, AAA, ThemeId, contrastRatio } from "@garden/ui";
-import { declaredPairs, themes } from "../theme/tokens";
+import { AA, AAA, ContrastTarget, contrastRatio } from "../theme/contrast";
+import { declaredPairs, themes, ThemeId } from "../theme/tokens";
 import type { ThemeTokens } from "../theme/tokens";
 
 describe("contrastRatio", () => {
@@ -37,5 +37,10 @@ describe("theme token contrast", () => {
     const fg = tokens.colors[pair.fgKey];
     const bg = tokens.colors[pair.bgKey];
     expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(requirement.normalMin);
+  });
+
+  it("ContrastTarget exports both tiers", () => {
+    expect(ContrastTarget.AA).toBe("AA");
+    expect(ContrastTarget.AAA).toBe("AAA");
   });
 });

@@ -8,5 +8,6 @@
     "lib": ["ES2022", "DOM"]
   },
   "include": ["src/**/*"],
+  "exclude": ["src/**/__tests__/**", "src/**/__mocks__/**", "src/**/*.test.ts", "src/**/*.test.tsx"],
   "references": [{ "path": "../config" }, { "path": "../core" }]
 }

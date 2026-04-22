@@ -1,4 +1,4 @@
-import { FontFamily } from "@garden/config";
+import { FontFamily, ThemeId } from "@garden/config";
 
 /** Theme tokens — neutral pastel light, neutral pastel dark, AAA high-contrast.
  *
@@ -7,12 +7,7 @@ import { FontFamily } from "@garden/config";
  * See `scripts/audit-contrast.ts`.
  */
 
-export const ThemeId = {
-  LightPastel: "light-pastel",
-  DarkPastel: "dark-pastel",
-  HighContrast: "high-contrast"
-} as const;
-export type ThemeId = (typeof ThemeId)[keyof typeof ThemeId];
+export { ThemeId } from "@garden/config";
 
 export type ThemeTokens = {
   readonly id: ThemeId;
