@@ -20,10 +20,7 @@ export type ThemeProviderProps = {
  * the tree in `react-native-paper`'s Provider — our primitives use raw RN
  * components styled with tokens directly, so the whole tree is predictable.
  */
-export const ThemeProvider = ({
-  themeId = ThemeId.LightPastel,
-  children
-}: ThemeProviderProps) => {
+export const ThemeProvider = ({ themeId = ThemeId.LightPastel, children }: ThemeProviderProps) => {
   const tokens = themes[themeId];
   const value = useMemo(() => ({ tokens, themeId }), [tokens, themeId]);
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

@@ -34,10 +34,33 @@ describe("Sector / harvest / soil-sample round-trip", () => {
     await repo.close();
   });
 
+  it("renames a sector in place", async () => {
+    const repo = await createMemoryRepository({ mode: "in-memory" });
+    await repo.saveSector(sector);
+    await repo.renameSector("north-bed", "North Greenhouse");
+    expect((await repo.getSector("north-bed"))?.name).toBe("North Greenhouse");
+    await repo.close();
+  });
+
+  it("deletes a sector; double delete is a no-op", async () => {
+    const repo = await createMemoryRepository({ mode: "in-memory" });
+    await repo.saveSector(sector);
+    await repo.deleteSector("north-bed");
+    expect(await repo.getSector("north-bed")).toBeUndefined();
+    expect(await repo.listSectorsByPlot("plot-a")).toHaveLength(0);
+    await expect(repo.deleteSector("north-bed")).resolves.toBeUndefined();
+    await repo.close();
+  });
+
   it("append-only harvest list is ordered by harvestedAt ascending", async () => {
     const repo = await createMemoryRepository({ mode: "in-memory" });
     await repo.saveSector(sector);
-    await repo.appendHarvest({ ...harvest, id: "h-2", weightGrams: 3000, harvestedAt: "2026-07-01T00:00:00.000Z" });
+    await repo.appendHarvest({
+      ...harvest,
+      id: "h-2",
+      weightGrams: 3000,
+      harvestedAt: "2026-07-01T00:00:00.000Z"
+    });
     await repo.appendHarvest(harvest);
     const list = await repo.listHarvestsBySector("north-bed");
     expect(list).toHaveLength(2);
@@ -105,7 +128,10 @@ describe("Sector / harvest / soil-sample round-trip", () => {
     });
     expect(await repo.listEventsByPin("bed-3")).toHaveLength(1);
     expect(await repo.listEventsBySector("north-bed")).toHaveLength(1);
-    const all2026 = await repo.listEventsInRange("2026-01-01T00:00:00.000Z", "2026-12-31T23:59:59.999Z");
+    const all2026 = await repo.listEventsInRange(
+      "2026-01-01T00:00:00.000Z",
+      "2026-12-31T23:59:59.999Z"
+    );
     expect(all2026).toHaveLength(2);
     await repo.close();
   });

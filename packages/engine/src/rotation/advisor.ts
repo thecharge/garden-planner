@@ -139,7 +139,9 @@ export const adviseRotation = (input: AdviseRotationInput): AdviseRotationResult
 
   if (input.sectorHistory.length === 0) {
     warnings.push(
-      warning("No planting history for this sector yet — advice will improve with each recorded season.")
+      warning(
+        "No planting history for this sector yet — advice will improve with each recorded season."
+      )
     );
   }
 

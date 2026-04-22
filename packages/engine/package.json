@@ -22,7 +22,9 @@
     "@anthropic-ai/sdk": "*"
   },
   "peerDependenciesMeta": {
-    "@anthropic-ai/sdk": { "optional": true }
+    "@anthropic-ai/sdk": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "ts-node": "^10.9.2"

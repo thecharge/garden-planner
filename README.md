@@ -87,13 +87,32 @@ A feature silo is deletable (minus its route) without breaking the rest of the a
 
 **State:** TanStack Query for everything through `MemoryRepository` and the reasoning provider; Zustand for client UI state; a Zustand **transient** store for the 60 Hz spatial pose (so capture does not melt React's render loop). Reanimated worklets and Skia canvas read from the transient store directly.
 
-**Accessibility pattern:** every spoken utterance is also a persistent caption *and* a haptic buzz. `announce(summary)` in `@garden/ui` is the single point where this contract is enforced. Invisible transparent `View`s overlaid on spatial objects let TalkBack focus 3D things.
+**Accessibility pattern:** every spoken utterance is also a persistent caption _and_ a haptic buzz. `announce(summary)` in `@garden/ui` is the single point where this contract is enforced. Invisible transparent `View`s overlaid on spatial objects let TalkBack focus 3D things.
 
 ## Where the docs go
 
-- **[QUICKSTART.md](QUICKSTART.md)** — clone → sideload `.apk` → first scan, ten steps.
+User-first:
+
+- **[HOW-TO.md](HOW-TO.md)** — plain-language guide to every flow: add a sector, log a harvest, paste your Anthropic key, change the theme.
+- **[SIDELOAD.md](SIDELOAD.md)** — ten steps to install the `.apk` on an Android phone. No Google account, no store.
+- **[QUICKSTART.md](QUICKSTART.md)** — from clone to sideload in ten steps. Developer audience.
+
+Developer-first:
+
+- **[COMMANDS.md](COMMANDS.md)** — every `pnpm …` root script + every `scripts/*.sh` in one cheat sheet.
+- **[docs/app-flow.md](docs/app-flow.md)** — the capture → verdict → sector → sow → harvest → rotation → nutrient narrative. The "what the data model does, in order" reference.
+- **[BUILDING.md](BUILDING.md)** — install JDK + Android SDK, boot an emulator, build an APK.
+- **[CLAUDE.md](CLAUDE.md)** — conventions, architecture, and how the repo is laid out for LLM-assisted edits.
 - **[ACCESSIBILITY.md](ACCESSIBILITY.md)** — reviewer sign-off ledger (dyslexia / low-vision / deaf-or-HOH). Release gate.
-- **[openspec/changes/](openspec/changes/)** — the spec-driven design trail for every change, including `bootstrap-spatial-garden-planner`.
+- **[openspec/changes/](openspec/changes/)** — the spec-driven design trail for every change.
+
+## Run it
+
+```bash
+pnpm dev
+```
+
+That's the whole loop. `pnpm dev` boots the emulator (launches the AVD if not running), starts Metro, installs the APK, and streams Metro logs. See [COMMANDS.md](COMMANDS.md) for the rest.
 
 ## License
 

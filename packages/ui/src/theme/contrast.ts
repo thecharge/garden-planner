@@ -14,7 +14,13 @@ const B_COEF = 0.0722;
 
 const parseHex = (hex: string): readonly [number, number, number] => {
   const clean = hex.replace(/^#/, "");
-  const expanded = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+  const expanded =
+    clean.length === 3
+      ? clean
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : clean;
   const r = parseInt(expanded.slice(0, 2), HEX_RADIX);
   const g = parseInt(expanded.slice(2, 4), HEX_RADIX);
   const b = parseInt(expanded.slice(4, 6), HEX_RADIX);

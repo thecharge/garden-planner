@@ -26,10 +26,7 @@ export const diagnosePin = async (input: DiagnoseInput): Promise<Summary> => {
   ) {
     factors.push(`water table ${input.waterTableDepthMeters}m (shallow)`);
   }
-  if (
-    input.compactionPenetrometerKpa !== undefined &&
-    input.compactionPenetrometerKpa > 2000
-  ) {
+  if (input.compactionPenetrometerKpa !== undefined && input.compactionPenetrometerKpa > 2000) {
     factors.push(`soil compaction ${input.compactionPenetrometerKpa} kPa (high)`);
   }
   if (failures.length > 0) {

@@ -34,7 +34,8 @@ export const companionTable: ReadonlyArray<CompanionEntry> = [
     speciesB: "garlic-softneck",
     affinity: CompanionAffinity.Negative,
     mechanism: "Alliums reduce legume nodulation and nitrogen fixation.",
-    sourceCitation: "Willey, 'Resource Use in Intercropping Systems', Experimental Agriculture (1990)."
+    sourceCitation:
+      "Willey, 'Resource Use in Intercropping Systems', Experimental Agriculture (1990)."
   },
   {
     speciesA: "squash-zucchini",

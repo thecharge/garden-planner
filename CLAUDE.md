@@ -39,11 +39,11 @@ export const RotationReasonCode = {
   SameFamilyTooSoon: "SAME_FAMILY_TOO_SOON",
   LegumeNitrogenCarryover: "LEGUME_NITROGEN_CARRYOVER"
 } as const;
-export type RotationReasonCode = typeof RotationReasonCode[keyof typeof RotationReasonCode];
+export type RotationReasonCode = (typeof RotationReasonCode)[keyof typeof RotationReasonCode];
 
 // Call sites:
-reason.code === RotationReasonCode.SameFamilyTooSoon  // ✓
-reason.code === "SAME_FAMILY_TOO_SOON"                // ✗ — raw literal comparison flagged
+reason.code === RotationReasonCode.SameFamilyTooSoon; // ✓
+reason.code === "SAME_FAMILY_TOO_SOON"; // ✗ — raw literal comparison flagged
 ```
 
 Shared domain enums live in `packages/config/src/enums.ts`. Single-package enums stay next to their consumer (e.g., `LogLevel` in `apps/mobile/src/core/log-level.ts`).

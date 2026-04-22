@@ -8,7 +8,7 @@
 import { createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 import TestRenderer, { act } from "react-test-renderer";
-import { ThemeId } from "@garden/config";
+import { SummaryType, ThemeId } from "@garden/config";
 import { themes } from "../../theme/tokens";
 import { Body } from "../body";
 import { Button, ButtonMode } from "../button";
@@ -17,6 +17,7 @@ import { Card } from "../card";
 import { Heading } from "../heading";
 import { ListItem } from "../list-item";
 import { Screen } from "../screen";
+import { TextInput } from "../text-input";
 import { ThemeProvider, useActiveThemeId, useThemeTokens } from "../theme-provider";
 
 const withTheme = (themeId: ThemeId, children: ReactNode): ReactElement =>
@@ -50,17 +51,13 @@ describe("Heading", () => {
 });
 
 describe("Body", () => {
-  const cases: ReadonlyArray<readonly [string, boolean, keyof (typeof themes)[ThemeId]["colors"]]> = [
-    ["default", false, "onSurface"],
-    ["muted", true, "onMuted"]
-  ];
+  const cases: ReadonlyArray<readonly [string, boolean, keyof (typeof themes)[ThemeId]["colors"]]> =
+    [
+      ["default", false, "onSurface"],
+      ["muted", true, "onMuted"]
+    ];
   it.each(cases)("%s Body uses %p muted flag with theme color", (_name, muted, colorKey) => {
-    const tree = render(
-      withTheme(
-        ThemeId.LightPastel,
-        createElement(Body, { muted }, "Hello")
-      )
-    );
+    const tree = render(withTheme(ThemeId.LightPastel, createElement(Body, { muted }, "Hello")));
     const text = tree.root.findByType("Text");
     expect(text.props.style.color).toBe(themes[ThemeId.LightPastel].colors[colorKey]);
     expect(text.props.style.fontSize).toBeGreaterThanOrEqual(18);
@@ -70,14 +67,101 @@ describe("Body", () => {
 
 describe("Caption", () => {
   it("wraps text in a muted View with live-region polite announcement", () => {
-    const tree = render(
-      withTheme(ThemeId.LightPastel, createElement(Caption, null, "heads up"))
-    );
+    const tree = render(withTheme(ThemeId.LightPastel, createElement(Caption, null, "heads up")));
     const outerView = tree.root.findByType("View");
     expect(outerView.props.style.backgroundColor).toBe(themes[ThemeId.LightPastel].colors.muted);
     const inner = tree.root.findByType("Text");
     expect(inner.props.accessibilityLiveRegion).toBe("polite");
     expect(inner.children).toContain("heads up");
+  });
+
+  const variantCases: ReadonlyArray<
+    readonly [
+      SummaryType,
+      keyof (typeof themes)[ThemeId]["colors"],
+      keyof (typeof themes)[ThemeId]["colors"]
+    ]
+  > = [
+    [SummaryType.Success, "success", "onSuccess"],
+    [SummaryType.Warning, "warning", "onWarning"],
+    [SummaryType.ActionRequired, "secondary", "onSecondary"],
+    [SummaryType.Rejection, "error", "onError"]
+  ];
+  it.each(variantCases)("variant %p paints bg %p / fg %p", (variant, bgKey, fgKey) => {
+    const tree = render(withTheme(ThemeId.LightPastel, createElement(Caption, { variant }, "x")));
+    const view = tree.root.findByType("View");
+    expect(view.props.style.backgroundColor).toBe(themes[ThemeId.LightPastel].colors[bgKey]);
+    const text = tree.root.findByType("Text");
+    expect(text.props.style.color).toBe(themes[ThemeId.LightPastel].colors[fgKey]);
+  });
+});
+
+describe("TextInput", () => {
+  it("forwards onChangeText and renders label + accessibilityLabel", () => {
+    const onChangeText = jest.fn();
+    const tree = render(
+      withTheme(
+        ThemeId.LightPastel,
+        createElement(TextInput, {
+          value: "",
+          onChangeText,
+          accessibilityLabel: "Email field",
+          label: "Email"
+        })
+      )
+    );
+    const input = tree.root.findByType("TextInput");
+    expect(input.props.accessibilityLabel).toBe("Email field");
+    act(() => {
+      input.props.onChangeText("hi@example.com");
+    });
+    expect(onChangeText).toHaveBeenCalledWith("hi@example.com");
+    const labelText = tree.root.findAllByType("Text").find((t) => t.children.join("") === "Email");
+    expect(labelText).toBeDefined();
+  });
+
+  it("focus toggles border token from muted to primary", () => {
+    const tree = render(
+      withTheme(
+        ThemeId.LightPastel,
+        createElement(TextInput, {
+          value: "",
+          onChangeText: () => undefined,
+          accessibilityLabel: "x"
+        })
+      )
+    );
+    const input = tree.root.findByType("TextInput");
+    expect(input.props.style.borderColor).toBe(themes[ThemeId.LightPastel].colors.muted);
+    act(() => {
+      input.props.onFocus();
+    });
+    const focused = tree.root.findByType("TextInput");
+    expect(focused.props.style.borderColor).toBe(themes[ThemeId.LightPastel].colors.primary);
+    act(() => {
+      focused.props.onBlur();
+    });
+    expect(tree.root.findByType("TextInput").props.style.borderColor).toBe(
+      themes[ThemeId.LightPastel].colors.muted
+    );
+  });
+
+  it("forwards secureTextEntry and keyboardType props", () => {
+    const tree = render(
+      withTheme(
+        ThemeId.LightPastel,
+        createElement(TextInput, {
+          value: "sk-ant-abc",
+          onChangeText: () => undefined,
+          accessibilityLabel: "key",
+          secureTextEntry: true,
+          keyboardType: "numeric"
+        })
+      )
+    );
+    const input = tree.root.findByType("TextInput");
+    expect(input.props.secureTextEntry).toBe(true);
+    expect(input.props.keyboardType).toBe("numeric");
   });
 });
 
@@ -168,11 +252,17 @@ describe("Screen", () => {
     const tree = render(
       withTheme(
         ThemeId.LightPastel,
-        createElement(Screen, { accessibilityLabel: "x", scroll: false }, createElement(Heading, null, "Title"))
+        createElement(
+          Screen,
+          { accessibilityLabel: "x", scroll: false },
+          createElement(Heading, null, "Title")
+        )
       )
     );
     const views = tree.root.findAllByType("View");
-    expect(views[0]!.props.style.backgroundColor).toBe(themes[ThemeId.LightPastel].colors.background);
+    expect(views[0]!.props.style.backgroundColor).toBe(
+      themes[ThemeId.LightPastel].colors.background
+    );
     // Inner content container has a top padding covering the status bar.
     const contentView = views.find((v) => v.props.style?.paddingTop !== undefined);
     expect(contentView?.props.style.paddingTop).toBeGreaterThan(0);
@@ -180,10 +270,7 @@ describe("Screen", () => {
 
   it("wraps children in a ScrollView when scroll=true (default)", () => {
     const tree = render(
-      withTheme(
-        ThemeId.LightPastel,
-        createElement(Screen, null, createElement(Heading, null, "x"))
-      )
+      withTheme(ThemeId.LightPastel, createElement(Screen, null, createElement(Heading, null, "x")))
     );
     const sv = tree.root.findAllByType("ScrollView");
     expect(sv.length).toBe(1);

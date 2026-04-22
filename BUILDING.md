@@ -153,17 +153,17 @@ pnpm --filter apps-mobile run apk
 
 This is the **known-working** pair set for Expo SDK 55. Do not freelance these.
 
-| Component | Pinned version | Reason |
-| --- | --- | --- |
-| Expo SDK | 55.0.16 | Set in `apps/mobile/package.json`. |
-| `react-native` | **0.83.6** | Expo 55 is built against 0.83.6. RN 0.85.x breaks `expo-modules-core`'s `Promise.kt` override. |
-| Gradle wrapper | **8.14.3** | 9.0.0 removes `JvmVendorSpec.IBM_SEMERU` which `foojay-resolver-convention@0.5.0` (pinned by `@react-native/gradle-plugin@0.83.6`) still references. |
-| JDK | 21 (JBR from Android Studio snap) | 17+ required by AGP 8.x; 21 tested. |
-| Android SDK platform | 35 | `app.json` `android.package` targets it. |
-| Build tools | 35.0.0 | |
-| System image | `system-images;android-35;google_apis;x86_64` | |
-| NDK | 27.1.12297006 | Resolved automatically by AGP. |
-| CMake | 3.22.1 | Used by Skia + Reanimated native builds. |
+| Component            | Pinned version                                | Reason                                                                                                                                               |
+| -------------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Expo SDK             | 55.0.16                                       | Set in `apps/mobile/package.json`.                                                                                                                   |
+| `react-native`       | **0.83.6**                                    | Expo 55 is built against 0.83.6. RN 0.85.x breaks `expo-modules-core`'s `Promise.kt` override.                                                       |
+| Gradle wrapper       | **8.14.3**                                    | 9.0.0 removes `JvmVendorSpec.IBM_SEMERU` which `foojay-resolver-convention@0.5.0` (pinned by `@react-native/gradle-plugin@0.83.6`) still references. |
+| JDK                  | 21 (JBR from Android Studio snap)             | 17+ required by AGP 8.x; 21 tested.                                                                                                                  |
+| Android SDK platform | 35                                            | `app.json` `android.package` targets it.                                                                                                             |
+| Build tools          | 35.0.0                                        |                                                                                                                                                      |
+| System image         | `system-images;android-35;google_apis;x86_64` |                                                                                                                                                      |
+| NDK                  | 27.1.12297006                                 | Resolved automatically by AGP.                                                                                                                       |
+| CMake                | 3.22.1                                        | Used by Skia + Reanimated native builds.                                                                                                             |
 
 ## Troubleshooting
 

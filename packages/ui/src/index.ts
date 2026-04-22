@@ -1,4 +1,11 @@
-export { ThemeId, themes, lightPastel, darkPastel, highContrast, declaredPairs } from "./theme/tokens";
+export {
+  ThemeId,
+  themes,
+  lightPastel,
+  darkPastel,
+  highContrast,
+  declaredPairs
+} from "./theme/tokens";
 export type { ThemeTokens } from "./theme/tokens";
 
 export { ContrastTarget, contrastRatio, AA, AAA } from "./theme/contrast";
@@ -30,3 +37,5 @@ export { Card } from "./primitives/card";
 export type { CardProps } from "./primitives/card";
 export { ListItem } from "./primitives/list-item";
 export type { ListItemProps } from "./primitives/list-item";
+export { TextInput, AutoCapitalize } from "./primitives/text-input";
+export type { TextInputProps } from "./primitives/text-input";

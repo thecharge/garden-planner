@@ -93,8 +93,24 @@ export const buildRepository = async (sqlite: SqliteLike): Promise<MemoryReposit
          ON CONFLICT(id) DO UPDATE SET
            quantity = excluded.quantity,
            notes = excluded.notes`,
-        [r.id, r.kind, r.name, r.quantity, r.unit, r.acquiredAt, r.sourceSupplierId ?? null, r.notes ?? null]
+        [
+          r.id,
+          r.kind,
+          r.name,
+          r.quantity,
+          r.unit,
+          r.acquiredAt,
+          r.sourceSupplierId ?? null,
+          r.notes ?? null
+        ]
       );
+    },
+
+    listInventoryRecords: async () => {
+      const rows = await sqlite.all<InventoryRow>(
+        "SELECT * FROM inventory_records ORDER BY acquired_at DESC"
+      );
+      return rows.map(rowToInventoryRecord);
     },
 
     appendEvent: async (e: InventoryEvent) => {
@@ -166,6 +182,14 @@ export const buildRepository = async (sqlite: SqliteLike): Promise<MemoryReposit
       return rows.map(rowToSector);
     },
 
+    renameSector: async (id: string, name: string) => {
+      await sqlite.run("UPDATE sectors SET name = ? WHERE id = ?", [name, id]);
+    },
+
+    deleteSector: async (id: string) => {
+      await sqlite.run("DELETE FROM sectors WHERE id = ?", [id]);
+    },
+
     appendHarvest: async (h: Harvest) => {
       asPositiveFinite(h.weightGrams);
       await sqlite.run(
@@ -231,10 +255,9 @@ export const buildRepository = async (sqlite: SqliteLike): Promise<MemoryReposit
     },
 
     getBoundary: async (plotId: string) => {
-      const row = await sqlite.get<BoundaryRow>(
-        "SELECT * FROM boundaries WHERE plot_id = ?",
-        [plotId]
-      );
+      const row = await sqlite.get<BoundaryRow>("SELECT * FROM boundaries WHERE plot_id = ?", [
+        plotId
+      ]);
       if (!row) {
         return undefined;
       }

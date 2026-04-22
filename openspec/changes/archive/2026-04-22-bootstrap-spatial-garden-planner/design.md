@@ -1,6 +1,6 @@
 ## Context
 
-Target user: a home grower or small farmer standing on their plot in Chepinci (Sofia basin), earbuds in, phone in pocket. They speak intent ("I want to grade this slope and plant an orchard"). The app whispers back guidance, asks them to pan the camera, maps the yard, and returns a plan that is ecologically right *and* legally compliant — without leaving the plot. Back at the kitchen table, the same app shows sectors, a year-over-year yield heatmap, and a science-backed rotation plan for next spring.
+Target user: a home grower or small farmer standing on their plot in Chepinci (Sofia basin), earbuds in, phone in pocket. They speak intent ("I want to grade this slope and plant an orchard"). The app whispers back guidance, asks them to pan the camera, maps the yard, and returns a plan that is ecologically right _and_ legally compliant — without leaving the plot. Back at the kitchen table, the same app shows sectors, a year-over-year yield heatmap, and a science-backed rotation plan for next spring.
 
 The user is dyslexic; the app must be readable by them and by other growers with low vision or hearing impairment. Accessibility is a first-class constraint, not a post-hoc audit.
 
@@ -144,11 +144,11 @@ For each engine module: `describe("happy & side")` with an `it.each` table of `[
 `packages/engine/src/rotation/` contains:
 
 - `families.ts` — typed `CropFamily` → member-species map.
-- `rotation-rules.ts` — typed array of rules: "avoid same family within N years"; "legume → heavy-feeder preferred"; "allium → brassica OK"; each rule cites a source (e.g., Coleman *The New Organic Grower*, USDA SARE rotation guides).
+- `rotation-rules.ts` — typed array of rules: "avoid same family within N years"; "legume → heavy-feeder preferred"; "allium → brassica OK"; each rule cites a source (e.g., Coleman _The New Organic Grower_, USDA SARE rotation guides).
 - `companions.ts` — typed pair-affinity table (three sisters, basil↔tomato, marigold pest deterrence; each cites a peer-reviewed or extension-service source).
 - `advise-rotation(sectorHistory, availableSpecies)` returns a ranked list with `{ speciesId, score, reasons: RotationReason[] }`, where each reason carries the source citation.
 
-**Why:** Rotation advice that doesn't explain *why* is indistinguishable from a horoscope. Grounding every recommendation in a citation keeps the app honest and lets a knowledgeable reviewer audit the table.
+**Why:** Rotation advice that doesn't explain _why_ is indistinguishable from a horoscope. Grounding every recommendation in a citation keeps the app honest and lets a knowledgeable reviewer audit the table.
 
 ### D13. Nutrient/water advisor: Liebig's Law + FAO-56 Penman-Monteith
 
@@ -192,7 +192,7 @@ Repo-root `README.md` explains architecture, the `@garden/*` package layout, the
 
 ### D19. Feature-Sliced Design inside `apps/mobile`
 
-**Chosen:** The mobile app is organized by *feature*, not by file type:
+**Chosen:** The mobile app is organized by _feature_, not by file type:
 
 ```
 apps/mobile/
@@ -226,7 +226,7 @@ Each feature folder holds its own `components/`, `hooks/`, `store/` (Zustand), a
 
 **Why:** Grouping by type (all hooks in `hooks/`, all components in `components/`) turns into spaghetti once the app has more than a handful of features. Feature silos prevent leak-across and make contributor onboarding a matter of opening one folder. This is the gold-standard React Native layout for 2026-scale apps.
 
-**Trade-off:** Cross-feature hooks (e.g., a rotation view needing yield history) must be imported across feature boundaries. Rule: cross-feature imports allowed *from* feature A into feature B only if B's hook is considered a public surface documented in its `index.ts`. An ESLint boundary rule enforces this.
+**Trade-off:** Cross-feature hooks (e.g., a rotation view needing yield history) must be imported across feature boundaries. Rule: cross-feature imports allowed _from_ feature A into feature B only if B's hook is considered a public surface documented in its `index.ts`. An ESLint boundary rule enforces this.
 
 ### D20. State discipline: TanStack Query + Zustand, no Redux
 
@@ -250,7 +250,7 @@ import { memoryRepository } from "@/core/query/repository";
 export const useSectorYield = (sectorId: string, year: number) =>
   useQuery({
     queryKey: ["yield", sectorId, year],
-    queryFn: () => yieldBySectorAndYear(memoryRepository, sectorId, year),
+    queryFn: () => yieldBySectorAndYear(memoryRepository, sectorId, year)
   });
 ```
 
@@ -263,7 +263,7 @@ export const useSectorYield = (sectorId: string, year: number) =>
 - **Zustand transient updates** — subscribers use `useStore.subscribe(selector, callback)` (non-hook API) to receive updates without triggering a component re-render. Reanimated worklets and the Skia canvas read from this store.
 - **`useRef`** for single-component-scope mutable spatial values that never need to propagate.
 
-A React component that needs to *display* a spatial value throttles itself via `useSyncExternalStore` with a selector that is stable unless the displayed value changes beyond a threshold (e.g., 1°, 0.1m). The engine's emitted `Protocol` object remains a batched snapshot and is the only thing that flows through React-state paths.
+A React component that needs to _display_ a spatial value throttles itself via `useSyncExternalStore` with a selector that is stable unless the displayed value changes beyond a threshold (e.g., 1°, 0.1m). The engine's emitted `Protocol` object remains a batched snapshot and is the only thing that flows through React-state paths.
 
 **Why:** Re-rendering at 60 Hz melts even mid-range Android devices, kills battery, and stutters the camera preview. This is the most common failure mode of spatial apps and the single architectural decision that determines whether the capture flow is usable.
 
@@ -276,7 +276,7 @@ A React component that needs to *display* a spatial value throttles itself via `
 - For every spatial object that should be focusable (a detected boundary corner, a sector polygon, a compliance overlay), we render a transparent React `View` at the object's projected screen rectangle. The `View` carries a full `accessibilityLabel` / `accessibilityRole` / `accessibilityHint`. TalkBack focuses the `View`; the user hears the description.
 - A `useSpatialA11y` hook in `src/features/a11y/` subscribes to the spatial store and calls `AccessibilityInfo.announceForAccessibility(...)` for spatial events: device-facing-changed, object-detected, compliance-verdict-updated. Each announcement is paired with a haptic pattern per the `announce()` cross-modal contract (D14).
 
-**Why:** The app's visual UI is intentionally minimal (voice-first + camera pass-through). That makes accessibility *harder*, not easier — there's nothing for a screen reader to focus on unless we build invisible affordances. The invisible-UI pattern is the standard solution for 3D/AR screen-reader compatibility.
+**Why:** The app's visual UI is intentionally minimal (voice-first + camera pass-through). That makes accessibility _harder_, not easier — there's nothing for a screen reader to focus on unless we build invisible affordances. The invisible-UI pattern is the standard solution for 3D/AR screen-reader compatibility.
 
 **Trade-off:** Invisible `View` rectangles need to update as the user moves the camera. Throttling via D21's pose subscription keeps this cheap.
 
@@ -302,12 +302,12 @@ A React component that needs to *display* a spatial value throttles itself via `
 
 The relationship to `@garden/config` is **complementary, not overlapping**:
 
-| Lives in `@garden/config` | Lives in `apps/mobile/src/core/config.ts` |
-| --- | --- |
+| Lives in `@garden/config`                                                     | Lives in `apps/mobile/src/core/config.ts`                              |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | Cross-package enums (`TaskStatus`, `EventKind`, `CropFamily`, `NutrientCode`) | App-only runtime constants (capture window ms, caption TTL, log level) |
-| Shared TypeScript types (`Protocol`, `Summary`, `Sector`, `Harvest`) | Expo / RN runtime settings, feature flags |
-| `SmepErrors` factory | Query client `staleTime`, Zustand store defaults |
-| `SpatialLimits` (Sofia municipal values) | Haptic pattern durations, TTS rate, default theme id |
+| Shared TypeScript types (`Protocol`, `Summary`, `Sector`, `Harvest`)          | Expo / RN runtime settings, feature flags                              |
+| `SmepErrors` factory                                                          | Query client `staleTime`, Zustand store defaults                       |
+| `SpatialLimits` (Sofia municipal values)                                      | Haptic pattern durations, TTS rate, default theme id                   |
 
 **Why:** Every magic number in a spatial + a11y app is a bug waiting to happen. Centralising them makes them reviewable in one file and swappable without chasing imports.
 

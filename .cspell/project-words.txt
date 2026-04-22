@@ -1,4 +1,5 @@
 annuum
+artefacts
 avdmanager
 BYOK
 callsites
@@ -6,11 +7,14 @@ carota
 cmdline
 COEF
 collab
+colours
 CRDT
 debouncer
 Debouncer
+Detvan
 gardenplanner
 getprop
+GHIJ
 gradlew
 Hochmuth
 Hyperlegible
@@ -37,6 +41,8 @@ prefs
 Pressable
 psychrometric
 Raes
+recognise
+refetches
 Riotte
 sdkmanager
 SEMERU

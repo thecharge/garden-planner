@@ -7,11 +7,7 @@ export type SpeciesMatch = {
   readonly reason: string;
 };
 
-const scoreSiteFit = (
-  species: SpeciesRecord,
-  scan: Protocol,
-  soil?: SoilSample
-): number => {
+const scoreSiteFit = (species: SpeciesRecord, scan: Protocol, soil?: SoilSample): number => {
   let score = 0;
   const siteSoil = soil?.texture ?? scan.data.soilType;
   if (siteSoil && species.siteFit.soilTypes.includes(siteSoil)) {
@@ -74,9 +70,7 @@ export const matchSpeciesToSite = (
   if (scored.length === 0) {
     return {
       kind: "no-match",
-      summary: actionRequired(
-        "No local species match — record a soil sample for follow-up."
-      )
+      summary: actionRequired("No local species match — record a soil sample for follow-up.")
     };
   }
   scored.sort((a, b) => b.score - a.score);

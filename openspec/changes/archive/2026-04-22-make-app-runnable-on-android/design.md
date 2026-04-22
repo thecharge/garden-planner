@@ -9,11 +9,13 @@ Three failures to close:
 ## Goals / Non-Goals
 
 **Goals:**
+
 - `git commit . -m "initial commit"` succeeds on a clean tree with the real pre-commit hook (not `--no-verify`).
 - `pnpm --filter apps-mobile run android` installs the app on the running `Pixel_9` emulator and reaches the capture screen without a red-box error.
 - Every task in `bootstrap-spatial-garden-planner/tasks.md` is either `[x] ...` with evidence or explicitly documented as a known follow-up.
 
 **Non-Goals:**
+
 - Flat-config migration (separate follow-up — drops the ENV-var shim entirely).
 - Smoke-tested feature flows (that's `DEVICE-TESTING.md`'s job with a human reviewer).
 - iOS.
@@ -33,6 +35,7 @@ Three failures to close:
 ### D3. Prettier — rigorous ignores + single worker
 
 **Chosen:**
+
 - `.prettierignore` gains: `coverage/`, `*.lcov`, `lcov.info`, `*.ttf`, `*.otf`, `*.apk`, `*.aab`, `.cspell-cache`, `android/`, `ios/`, `**/.turbo/**`, `**/dist/**`, `node_modules/**`.
 - lint-staged invokes prettier per pipeline, no concurrency bump.
 
@@ -47,6 +50,7 @@ Three failures to close:
 ### D6. Bootstrap task closure — evidence or follow-up
 
 **Chosen:** walk the 29 remaining `bootstrap-spatial-garden-planner` tasks. For each:
+
 - If the `fix-bootstrap-gaps` or this change's work completed it → mark `[x]` with a one-line evidence note inline.
 - If it genuinely can't ship today (e.g., "dyslexic reviewer sign-off in ACCESSIBILITY.md") → leave `[ ]` but add a "tracked in DEVICE-TESTING.md" note.
 - No silent deferrals. Every `[ ]` must have a reason visible on the line.
@@ -60,6 +64,7 @@ Three failures to close:
 ## Migration Plan
 
 Linear, same-session:
+
 1. Install cross-env; rewrite lint-staged.
 2. Update `.prettierignore`.
 3. Approve native builds; `pnpm install`.

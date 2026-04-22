@@ -48,7 +48,9 @@ describe("hapticPatternFor", () => {
     ["rejection", 1]
   ];
   it.each(cases)("%s has %d pattern elements", (type, n) => {
-    const pattern = hapticPatternFor(type as "success" | "warning" | "actionRequired" | "rejection");
+    const pattern = hapticPatternFor(
+      type as "success" | "warning" | "actionRequired" | "rejection"
+    );
     expect(pattern).toHaveLength(n);
   });
 });

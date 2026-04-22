@@ -3,6 +3,7 @@
 `bootstrap-spatial-garden-planner` shipped a working engine (144 tests green across six packages) but left gaps that blocked day-to-day use. User review enumerated them; this change closes them. The work is mechanical-heavy: mass code-mod of string-literal unions; toolchain wiring (husky / cspell / audit / coverage / emulator scripts / Expo dep promotion); i18n scaffolding; Claude Code docs and skills; plus the deferred real-hardware tasks from the original change (Paper-wrapped primitives, Skia overlays, Reanimated worklets, capture driver).
 
 Pre-existing toolchain the plan can lean on:
+
 - **JDK 21** at `/snap/android-studio/current/jbr` (JetBrains Runtime shipped with Android Studio snap).
 - **Android SDK** at `$HOME/Android/Sdk` with platform-tools, platform 35, build-tools 35, emulator, `system-images;android-35;google_apis;x86_64`.
 - **pnpm 10.33.0**, Node 24, Turborepo 2.9.
@@ -78,7 +79,7 @@ Consts used by one package stay in that package (e.g., `RotationReasonCode` in `
 }
 ```
 
-The selector matches union types whose *only* members are `TSLiteralType` (no interspersed references, keywords, or arrays). Tests are exempted via an override block in the same file.
+The selector matches union types whose _only_ members are `TSLiteralType` (no interspersed references, keywords, or arrays). Tests are exempted via an override block in the same file.
 
 **Why:** Catches violations at edit-time (in the IDE) and at CI lint-time. User chose this over a grep-based CI check for editor integration and precise matching.
 

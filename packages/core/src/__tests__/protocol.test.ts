@@ -15,9 +15,7 @@ describe("createProtocol", () => {
     data: baseData
   };
 
-  const tableInvalid: ReadonlyArray<
-    readonly [name: string, override: Partial<typeof valid>]
-  > = [
+  const tableInvalid: ReadonlyArray<readonly [name: string, override: Partial<typeof valid>]> = [
     ["missing id", { id: "" }],
     ["confidence out of range", { confidence: 1.5 }],
     ["non-finite confidence", { confidence: Number.NaN }]
@@ -35,9 +33,7 @@ describe("createProtocol", () => {
   });
 
   it("throws protocolEmpty when data is null", () => {
-    expect(() =>
-      createProtocol({ ...valid, data: null as never })
-    ).toThrow(SmepError);
+    expect(() => createProtocol({ ...valid, data: null as never })).toThrow(SmepError);
   });
 });
 

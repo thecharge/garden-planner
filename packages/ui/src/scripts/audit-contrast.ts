@@ -1,5 +1,8 @@
 #!/usr/bin/env node
-import { AA, AAA, ThemeId, contrastRatio } from "@garden/ui";
+// Import directly from theme sources (not `@garden/ui`) so the tsx loader
+// does not pull in the React Native primitives through the barrel export.
+import { ThemeId } from "@garden/config";
+import { AA, AAA, contrastRatio } from "../theme/contrast";
 import { declaredPairs, themes } from "../theme/tokens";
 import type { ContrastRequirement } from "../theme/contrast";
 import type { ThemeTokens } from "../theme/tokens";

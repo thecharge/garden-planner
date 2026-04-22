@@ -52,19 +52,22 @@ export type EventRow = {
   notes: string | null;
 };
 
-const pickDefined = <T>(value: T | null): T | undefined =>
-  value === null ? undefined : value;
+const pickDefined = <T>(value: T | null): T | undefined => (value === null ? undefined : value);
 
 export const rowToEvent = (row: EventRow): InventoryEvent => ({
   id: row.id,
   kind: row.kind as InventoryEvent["kind"],
   capturedAt: row.captured_at,
   delta: row.delta,
-  ...(pickDefined(row.target_record_id) === undefined ? {} : { targetRecordId: row.target_record_id as string }),
+  ...(pickDefined(row.target_record_id) === undefined
+    ? {}
+    : { targetRecordId: row.target_record_id as string }),
   ...(pickDefined(row.pin_id) === undefined ? {} : { pinId: row.pin_id as string }),
   ...(pickDefined(row.sector_id) === undefined ? {} : { sectorId: row.sector_id as string }),
   ...(pickDefined(row.species_id) === undefined ? {} : { speciesId: row.species_id as string }),
-  ...(pickDefined(row.pest_species_id) === undefined ? {} : { pestSpeciesId: row.pest_species_id as string }),
+  ...(pickDefined(row.pest_species_id) === undefined
+    ? {}
+    : { pestSpeciesId: row.pest_species_id as string }),
   ...(pickDefined(row.notes) === undefined ? {} : { notes: row.notes as string })
 });
 

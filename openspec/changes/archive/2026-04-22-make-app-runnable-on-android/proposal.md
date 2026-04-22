@@ -1,11 +1,14 @@
 ## Why
 
 User attempted `git commit . -m "initial commit"` and the pre-commit hook failed:
+
 ```
 ✖ ESLINT_USE_FLAT_CONFIG=false eslint --fix --max-warnings=0 failed without output (ENOENT).
 ✖ prettier --write failed without output (KILLED).
 ```
+
 Two problems:
+
 1. lint-staged v15 passes each command to `execa` **without a shell**. The leading `ENV=value` prefix in `"ESLINT_USE_FLAT_CONFIG=false eslint ..."` is parsed as the command name → ENOENT.
 2. Running prettier across 65 JSON/MD/YAML files in a single initial-commit batch hit a resource limit → KILLED.
 
@@ -23,10 +26,12 @@ User also flagged: remaining `bootstrap-spatial-garden-planner` tasks were defer
 ## Capabilities
 
 ### Modified Capabilities
+
 - `pre-commit-hygiene` — the env-var invocation contract changes (cross-env); warnings no longer block the staged lint run.
 - `dev-environment` — adds a concrete "app runs on a device" requirement plus the native-build steps for `@shopify/react-native-skia` and `react-native-reanimated`.
 
 ### New Capabilities
+
 - None — this change closes gaps in existing specs.
 
 ## Impact

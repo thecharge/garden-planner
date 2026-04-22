@@ -23,7 +23,12 @@ export type PaperMd3Theme = {
     readonly error: string;
     readonly onError: string;
   };
-  readonly fonts: Readonly<Record<string, { fontFamily: string; fontSize: number; lineHeight: number; letterSpacing: number }>>;
+  readonly fonts: Readonly<
+    Record<
+      string,
+      { fontFamily: string; fontSize: number; lineHeight: number; letterSpacing: number }
+    >
+  >;
 };
 
 const fontVariants = (tokens: ThemeTokens): PaperMd3Theme["fonts"] => {

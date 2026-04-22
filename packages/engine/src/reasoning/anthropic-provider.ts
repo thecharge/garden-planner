@@ -40,9 +40,7 @@ export type AnthropicProviderInput = {
   readonly modelId?: string;
 };
 
-const textFromContent = (
-  content: ReadonlyArray<{ type: string; text?: string }>
-): string => {
+const textFromContent = (content: ReadonlyArray<{ type: string; text?: string }>): string => {
   for (const block of content) {
     if (block.type === ContentBlockType.Text && block.text) {
       return block.text;

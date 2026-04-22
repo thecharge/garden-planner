@@ -38,8 +38,6 @@ describe("scanConfidence", () => {
   });
 
   it("throws captureTooShort on zero-duration chaos", () => {
-    expect(() =>
-      scanConfidence({ variance: 1, gpsAccuracy: 2, durationMs: 0 })
-    ).toThrow(SmepError);
+    expect(() => scanConfidence({ variance: 1, gpsAccuracy: 2, durationMs: 0 })).toThrow(SmepError);
   });
 });

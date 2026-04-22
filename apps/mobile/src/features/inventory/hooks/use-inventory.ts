@@ -3,17 +3,36 @@ import type { InventoryEvent, InventoryRecord } from "@garden/config";
 import { getMemoryRepository } from "@/core/query/repository";
 
 const invKey = ["inventory"] as const;
+const eventsKey = (fromIso: string, toIso: string) => ["inventory-events", fromIso, toIso] as const;
 
 export const useInventory = () =>
   useQuery<ReadonlyArray<InventoryRecord>>({
     queryKey: invKey,
     queryFn: async () => {
-      // MemoryRepository on device is the pure-JS adapter in repository.ts;
-      // it does not persist raw inventory-record rows. A future
-      // make-device-sqlite-adapter change wires a real expo-sqlite backing
-      // and re-exposes listInventoryRecords.
-      await getMemoryRepository();
-      return [];
+      const repo = await getMemoryRepository();
+      return repo.listInventoryRecords();
+    }
+  });
+
+export const useSaveInventoryRecord = () => {
+  const qc = useQueryClient();
+  return useMutation<void, Error, InventoryRecord>({
+    mutationFn: async (record) => {
+      const repo = await getMemoryRepository();
+      await repo.saveInventoryRecord(record);
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: invKey });
+    }
+  });
+};
+
+export const useEventsInRange = (fromIso: string, toIso: string) =>
+  useQuery<ReadonlyArray<InventoryEvent>>({
+    queryKey: eventsKey(fromIso, toIso),
+    queryFn: async () => {
+      const repo = await getMemoryRepository();
+      return repo.listEventsInRange(fromIso, toIso);
     }
   });
 
@@ -25,7 +44,7 @@ export const useAppendEvent = () => {
       await repo.appendEvent(event);
     },
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: invKey });
+      void qc.invalidateQueries({ queryKey: ["inventory-events"] });
     }
   });
 };

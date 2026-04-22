@@ -1,5 +1,14 @@
 # Quickstart
 
+> **TL;DR.** From a fresh terminal:
+>
+> ```bash
+> pnpm install
+> pnpm dev
+> ```
+>
+> `pnpm dev` boots the emulator, starts Metro, and installs the APK. See [COMMANDS.md](COMMANDS.md) for every script.
+
 From a clean machine to a working `.apk` on your phone, in ten steps. Plain language. Short sentences. Read top to bottom.
 
 ## Before you start

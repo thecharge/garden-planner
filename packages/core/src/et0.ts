@@ -38,12 +38,16 @@ const extraterrestrialRadiation = (latRad: number, dayOfYear: number): number =>
   const decl = solarDeclination(dayOfYear);
   const ws = sunsetHourAngle(latRad, decl);
   const term =
-    ws * Math.sin(latRad) * Math.sin(decl) +
-    Math.cos(latRad) * Math.cos(decl) * Math.sin(ws);
+    ws * Math.sin(latRad) * Math.sin(decl) + Math.cos(latRad) * Math.cos(decl) * Math.sin(ws);
   return ((24 * 60) / Math.PI) * 0.082 * dr * term;
 };
 
-const netRadiation = (solarMjm2d: number, raMjm2d: number, tempC: number, rhPct: number): number => {
+const netRadiation = (
+  solarMjm2d: number,
+  raMjm2d: number,
+  tempC: number,
+  rhPct: number
+): number => {
   const rns = 0.77 * solarMjm2d;
   const rso = 0.75 * raMjm2d;
   const ea = (rhPct / 100) * saturationVaporPressure(tempC);
@@ -59,7 +63,8 @@ const netRadiation = (solarMjm2d: number, raMjm2d: number, tempC: number, rhPct:
 const atmosphericPressure = (elevationM: number): number =>
   101.3 * Math.pow((293 - 0.0065 * elevationM) / 293, 5.26);
 
-const psychrometricConstant = (elevationM: number): number => 0.000665 * atmosphericPressure(elevationM);
+const psychrometricConstant = (elevationM: number): number =>
+  0.000665 * atmosphericPressure(elevationM);
 
 /** Compute ET₀ (mm/day) for a single climate point. */
 export const computeEt0 = (point: ClimatePoint): number => {
@@ -71,8 +76,7 @@ export const computeEt0 = (point: ClimatePoint): number => {
   const ra = extraterrestrialRadiation(latRad, point.dayOfYear);
   const rn = netRadiation(point.solarMjm2d, ra, point.tempMeanC, point.rhMeanPct);
   const numerator =
-    0.408 * delta * rn +
-    (gamma * (900 / (point.tempMeanC + 273)) * point.windMs * (es - ea));
+    0.408 * delta * rn + gamma * (900 / (point.tempMeanC + 273)) * point.windMs * (es - ea);
   const denominator = delta + gamma * (1 + 0.34 * point.windMs);
   const et0 = numerator / denominator;
   return Math.max(0, Number(et0.toFixed(3)));

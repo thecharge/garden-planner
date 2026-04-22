@@ -2,7 +2,7 @@
 
 Home growers and small farmers in Chepinci (Sofia basin) lose years to mistakes a commercial SaaS garden planner cannot catch: bad drainage, illegal setbacks, wrong species for clay soil, shade miscalculations, and months of municipal paperwork. Existing planners draw flat 2D pictures from generic databases and leave the hard, place-specific part to the user.
 
-This change bootstraps a **local-first, voice-led, accessibility-first spatial planner** that negotiates the physical, legal, and ecological reality of the *specific* plot being walked on — and that remembers what was planted where, how each sector performed year over year, and what the science says to plant there next. It turns a multi-year, multi-disciplinary process into a ten-minute conversation with the environment. The app is inclusive by default: designed with dyslexia, low vision, and hearing impairment accommodated in the core UI — not bolted on.
+This change bootstraps a **local-first, voice-led, accessibility-first spatial planner** that negotiates the physical, legal, and ecological reality of the _specific_ plot being walked on — and that remembers what was planted where, how each sector performed year over year, and what the science says to plant there next. It turns a multi-year, multi-disciplinary process into a ten-minute conversation with the environment. The app is inclusive by default: designed with dyslexia, low vision, and hearing impairment accommodated in the core UI — not bolted on.
 
 ## What Changes
 

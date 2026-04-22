@@ -38,12 +38,7 @@
       "adaptiveIcon": {
         "backgroundColor": "#F6F3EE"
       },
-      "permissions": [
-        "CAMERA",
-        "RECORD_AUDIO",
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
-      ]
+      "permissions": ["CAMERA", "RECORD_AUDIO", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "experiments": {
       "typedRoutes": true

@@ -26,7 +26,10 @@ const flattenPairs = (): ReadonlyArray<readonly [string, ThemePair]> => {
   for (const tokens of Object.values(themes)) {
     const requirement = tokens.id === ThemeId.HighContrast ? AAA : AA;
     for (const pair of declaredPairs) {
-      out.push([`${tokens.id}: ${pair.label} meets ${requirement.target}`, { tokens, pair, requirement }]);
+      out.push([
+        `${tokens.id}: ${pair.label} meets ${requirement.target}`,
+        { tokens, pair, requirement }
+      ]);
     }
   }
   return out;

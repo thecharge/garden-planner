@@ -21,12 +21,7 @@
     },
     "test": {
       "dependsOn": ["^build"],
-      "inputs": [
-        "src/**",
-        "__tests__/**",
-        "jest.config.ts",
-        "../../jest.preset.ts"
-      ],
+      "inputs": ["src/**", "__tests__/**", "jest.config.ts", "../../jest.preset.ts"],
       "outputs": ["coverage/**"]
     },
     "apk": {

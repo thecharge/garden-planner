@@ -161,7 +161,7 @@
 
 - [x] 9.1 End-to-end smoke test (Node-only, in-memory repo, mocked `anthropicProvider`): simulate capture → compliance → species match → sector sow → harvest → rotation advice → nutrient advice → yield aggregate — asserts the whole engine pipeline.
 - [ ] 9.2 Manual device test checklist: airplane-mode capture, boundary walk, verdict whisper + caption + haptic together, provider settings, inventory round-trip after reboot, theme switching, font switching, AAA high-contrast, OpenDyslexic, motion-reduction. — [deferred: tracked in apps/mobile/DEVICE-TESTING.md — manual human checklist]
-- [x] 9.3 Verify every engine module's test file covers happy / side / critical / chaos via `it.each` factories (reviewer checklist). — every engine __tests__/*.test.ts has happy/side/critical/chaos via it.each
+- [x] 9.3 Verify every engine module's test file covers happy / side / critical / chaos via `it.each` factories (reviewer checklist). — every engine **tests**/\*.test.ts has happy/side/critical/chaos via it.each
 - [ ] 9.4 Automated accessibility checks: axe-style audit on every rendered screen; TalkBack smoke test on the capture, sector, yield, rotation, and settings screens. — [deferred: axe + TalkBack smoke — tracked in DEVICE-TESTING.md]
 - [x] 9.5 Contrast-check CI step: load every theme's token set, assert AA (and AAA for high-contrast) across all declared foreground/background pairs. — packages/ui/src/scripts/audit-contrast.ts run in CI
 - [x] 9.6 Run `openspec validate bootstrap-spatial-garden-planner` and fix any schema violations. — openspec validate bootstrap-spatial-garden-planner — ran green

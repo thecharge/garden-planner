@@ -10,10 +10,7 @@ import type { ReactNode, CSSProperties } from "react";
 
 type AnyProps = { children?: ReactNode; style?: CSSProperties; [k: string]: unknown };
 
-const makeHost =
-  (name: string) =>
-  (props: AnyProps) =>
-    createElement(name, props, props.children);
+const makeHost = (name: string) => (props: AnyProps) => createElement(name, props, props.children);
 
 export const View = makeHost("View");
 export const Text = makeHost("Text");
@@ -25,6 +22,7 @@ export const Pressable = ({ children, ...props }: AnyProps) => {
       : children;
   return createElement("Pressable", props, resolvedChildren);
 };
+export const TextInput = makeHost("TextInput");
 export const StatusBar = { currentHeight: 24 };
 
-export default { View, Text, ScrollView, Pressable, StatusBar };
+export default { View, Text, ScrollView, Pressable, TextInput, StatusBar };

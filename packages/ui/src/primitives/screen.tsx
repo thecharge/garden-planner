@@ -19,7 +19,14 @@ export const Screen = ({ children, scroll = true, accessibilityLabel }: ScreenPr
   const topPadding = Math.max(insets.top, statusBarHeight) + VERTICAL_PADDING;
 
   const content = (
-    <View style={{ gap: 12, paddingHorizontal: HORIZONTAL_PADDING, paddingTop: topPadding, paddingBottom: VERTICAL_PADDING }}>
+    <View
+      style={{
+        gap: 12,
+        paddingHorizontal: HORIZONTAL_PADDING,
+        paddingTop: topPadding,
+        paddingBottom: VERTICAL_PADDING
+      }}
+    >
       {children}
     </View>
   );

@@ -1,9 +1,4 @@
-import {
-  ClimateSource,
-  LimitingFactorCode,
-  NutrientUnit,
-  SummaryType
-} from "@garden/config";
+import { ClimateSource, LimitingFactorCode, NutrientUnit, SummaryType } from "@garden/config";
 import { actionRequired, computeEt0, success, warning } from "@garden/core";
 import type {
   AmendmentRecommendation,
@@ -40,10 +35,7 @@ const amendmentFor = (
       sourceCitation: LIEBIG_CITATION
     };
   }
-  const shortfallPct = Math.max(
-    1,
-    Math.round(limiting.shortfallNormalised * SHORTFALL_TO_PERCENT)
-  );
+  const shortfallPct = Math.max(1, Math.round(limiting.shortfallNormalised * SHORTFALL_TO_PERCENT));
   return {
     nutrient: limiting.code,
     amount: shortfallPct,
@@ -59,10 +51,7 @@ export type AdviseAmendmentsResult = {
 };
 
 /** Deterministic amendment planner. Pure function; no reasoning provider. */
-export const adviseAmendments = (
-  sample: SoilSample,
-  speciesId: string
-): AdviseAmendmentsResult => {
+export const adviseAmendments = (sample: SoilSample, speciesId: string): AdviseAmendmentsResult => {
   const demand = lookupDemand(speciesId);
   if (!demand) {
     return {

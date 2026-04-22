@@ -17,10 +17,13 @@ const ICON_SIZE = 22;
 
 const renderIcon =
   (name: FeatherIcon) =>
-  ({ color }: { readonly color: string }) =>
-    <Feather name={name} size={ICON_SIZE} color={color} />;
+  ({ color }: { readonly color: string }) => <Feather name={name} size={ICON_SIZE} color={color} />;
 
-const tabs: ReadonlyArray<{ readonly name: string; readonly title: string; readonly icon: FeatherIcon }> = [
+const tabs: ReadonlyArray<{
+  readonly name: string;
+  readonly title: string;
+  readonly icon: FeatherIcon;
+}> = [
   { name: "capture", title: "Capture", icon: FeatherIcon.Camera },
   { name: "sectors", title: "Sectors", icon: FeatherIcon.Grid },
   { name: "yield", title: "Yield", icon: FeatherIcon.BarChart },

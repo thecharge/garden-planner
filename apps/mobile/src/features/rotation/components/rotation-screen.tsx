@@ -18,9 +18,7 @@ export const RotationScreen = () => {
     <Screen accessibilityLabel="Rotation screen">
       <Heading>Rotation recommendations</Heading>
       <Body muted>
-        {advice.isLoading
-          ? "Loading…"
-          : `${top.length} top match(es) for ${SECTOR_ID}`}
+        {advice.isLoading ? "Loading…" : `${top.length} top match(es) for ${SECTOR_ID}`}
       </Body>
       {top.map((rec) => (
         <Card key={rec.speciesId} accessibilityLabel={`Recommendation for ${rec.speciesId}`}>

@@ -1,7 +1,10 @@
 import { computeEt0 } from "../et0";
 import type { ClimatePoint } from "@garden/config";
 
-const sofiaBase: Omit<ClimatePoint, "tempMeanC" | "rhMeanPct" | "windMs" | "solarMjm2d" | "dayOfYear"> = {
+const sofiaBase: Omit<
+  ClimatePoint,
+  "tempMeanC" | "rhMeanPct" | "windMs" | "solarMjm2d" | "dayOfYear"
+> = {
   lat: 42.7,
   elevationM: 550,
   source: "climatology-fallback",

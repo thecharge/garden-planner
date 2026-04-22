@@ -24,6 +24,8 @@
     "expo-sqlite": "*"
   },
   "peerDependenciesMeta": {
-    "expo-sqlite": { "optional": true }
+    "expo-sqlite": {
+      "optional": true
+    }
   }
 }

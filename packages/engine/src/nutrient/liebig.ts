@@ -21,11 +21,7 @@ export const computeLimitingFactor = (
 ): LimitingFactor | null => {
   const candidates: LimitingFactor[] = [];
 
-  const addNpk = (
-    code: LimitingFactorCode,
-    current: number | undefined,
-    target: number
-  ): void => {
+  const addNpk = (code: LimitingFactorCode, current: number | undefined, target: number): void => {
     if (current === undefined) {
       return;
     }

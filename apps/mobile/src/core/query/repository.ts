@@ -59,6 +59,10 @@ const createInMemoryRepository = (): MemoryRepository => {
     saveInventoryRecord: async (r) => {
       s.inventoryRecords.set(r.id, r);
     },
+    listInventoryRecords: async () =>
+      Array.from(s.inventoryRecords.values()).sort((a, b) =>
+        a.acquiredAt < b.acquiredAt ? 1 : -1
+      ),
     appendEvent: async (e) => {
       s.events.push(e);
     },
@@ -72,11 +76,20 @@ const createInMemoryRepository = (): MemoryRepository => {
     getSector: async (id) => s.sectors.get(id),
     listSectorsByPlot: async (plotId) =>
       Array.from(s.sectors.values()).filter((sec) => sec.plotId === plotId),
+    renameSector: async (id, name) => {
+      const existing = s.sectors.get(id);
+      if (!existing) {
+        return;
+      }
+      s.sectors.set(id, { ...existing, name });
+    },
+    deleteSector: async (id) => {
+      s.sectors.delete(id);
+    },
     appendHarvest: async (h) => {
       s.harvests.push(h);
     },
-    listHarvestsBySector: async (sectorId) =>
-      s.harvests.filter((h) => h.sectorId === sectorId),
+    listHarvestsBySector: async (sectorId) => s.harvests.filter((h) => h.sectorId === sectorId),
     saveSoilSample: async (sample) => {
       s.soilSamples.push(sample);
     },

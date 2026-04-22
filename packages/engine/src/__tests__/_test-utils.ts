@@ -19,6 +19,7 @@ export const createMockMemoryRepo = (): MemoryRepository & {
       permits.push(spec.ruleId);
     },
     saveInventoryRecord: asyncNoop,
+    listInventoryRecords: async () => [],
     appendEvent: asyncNoop,
     listEventsByPin: async () => [],
     listEventsBySector: async () => [],
@@ -26,6 +27,8 @@ export const createMockMemoryRepo = (): MemoryRepository & {
     saveSector: asyncNoop,
     getSector: async () => undefined,
     listSectorsByPlot: async () => [],
+    renameSector: asyncNoop,
+    deleteSector: asyncNoop,
     appendHarvest: asyncNoop,
     listHarvestsBySector: async () => [],
     saveSoilSample: asyncNoop,

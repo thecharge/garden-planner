@@ -14,6 +14,7 @@ pnpm check:all
 ```
 
 That expands to:
+
 - `pnpm typecheck` — TSC across every package.
 - `pnpm lint` — ESLint across every package (including the custom string-literal-union ban).
 - `pnpm test` — Jest across every package.

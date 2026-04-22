@@ -13,8 +13,7 @@ import type { ComplianceRule, ScanData, Verdict } from "@garden/config";
  * None of these rules is legal advice. The disclaimer on every verdict says so.
  */
 
-const DISCLAIMER =
-  "Advisory only — verify with Sofia Municipality. Not legal advice.";
+const DISCLAIMER = "Advisory only — verify with Sofia Municipality. Not legal advice.";
 
 const setbackRule: ComplianceRule = {
   id: "sofia.setback.boundary",
@@ -70,8 +69,4 @@ const waterTableRule: ComplianceRule = {
 /** Rules iterated in order. Highest-severity rules come first so early-return
  * picks up a rejection before a warning or actionRequired.
  */
-export const sofiaRules: ReadonlyArray<ComplianceRule> = [
-  setbackRule,
-  slopeRule,
-  waterTableRule
-];
+export const sofiaRules: ReadonlyArray<ComplianceRule> = [setbackRule, slopeRule, waterTableRule];

@@ -1,15 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  adviseAmendments,
-  adviseWater,
-  sofiaFallbackClimate
-} from "@garden/engine";
+import { adviseAmendments, adviseWater, sofiaFallbackClimate } from "@garden/engine";
 import type { GrowthStage, SoilSample } from "@garden/config";
 
-export const useAmendmentPlan = (
-  sample: SoilSample | undefined,
-  speciesId: string
-) =>
+export const useAmendmentPlan = (sample: SoilSample | undefined, speciesId: string) =>
   useQuery({
     enabled: Boolean(sample),
     queryKey: ["nutrient", sample?.id, speciesId],

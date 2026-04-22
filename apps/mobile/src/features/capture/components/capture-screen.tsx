@@ -33,11 +33,12 @@ export const CaptureScreen = () => {
     verdict.mutate(protocol, { onSettled: () => setWindowOpen(false) });
   }, [verdict]);
 
-  const captionText = verdict.isPending || windowOpen
-    ? "Scanning…"
-    : verdict.data
-    ? verdict.data.message
-    : "Ready to scan.";
+  const captionText =
+    verdict.isPending || windowOpen
+      ? "Scanning…"
+      : verdict.data
+        ? verdict.data.message
+        : "Ready to scan.";
 
   return (
     <Screen accessibilityLabel="Capture screen">

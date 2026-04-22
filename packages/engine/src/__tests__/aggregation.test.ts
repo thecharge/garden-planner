@@ -1,10 +1,6 @@
 import { SmepError } from "@garden/config";
 import { createMemoryRepository } from "@garden/memory";
-import {
-  heatmapData,
-  plantingsBySectorAndYear,
-  yieldBySectorAndYear
-} from "../aggregation/yield";
+import { heatmapData, plantingsBySectorAndYear, yieldBySectorAndYear } from "../aggregation/yield";
 
 const sector = {
   id: "s-1",

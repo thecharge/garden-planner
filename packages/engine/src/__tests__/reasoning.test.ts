@@ -2,10 +2,11 @@ import { SmepError } from "@garden/config";
 import { anthropicProvider, createReasoningRouter } from "../index";
 import type { AnthropicClientLike } from "../reasoning/anthropic-provider";
 
-const createHandler = (text: string) => async (args: { messages: ReadonlyArray<{ content: string }> }) => ({
-  content: [{ type: "text", text: `${text}:${args.messages[0]!.content}` }],
-  usage: { input_tokens: 5, output_tokens: 7 }
-});
+const createHandler =
+  (text: string) => async (args: { messages: ReadonlyArray<{ content: string }> }) => ({
+    content: [{ type: "text", text: `${text}:${args.messages[0]!.content}` }],
+    usage: { input_tokens: 5, output_tokens: 7 }
+  });
 
 const mockClient = (text: string): AnthropicClientLike => ({
   messages: { create: createHandler(text) }
@@ -37,6 +38,8 @@ describe("createReasoningRouter", () => {
 
   it("unknown active id throws", () => {
     const primary = anthropicProvider({ client: null });
-    expect(() => createReasoningRouter({ active: "nope", providers: [primary] })).toThrow(SmepError);
+    expect(() => createReasoningRouter({ active: "nope", providers: [primary] })).toThrow(
+      SmepError
+    );
   });
 });

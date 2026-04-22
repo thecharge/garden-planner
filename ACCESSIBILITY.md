@@ -14,11 +14,11 @@ The baseline commitments are laid out in the `accessibility` capability spec (`o
 
 The release checklist requires at minimum:
 
-| Reviewer kind | Name | Role | Date reviewed | Result |
-| --- | --- | --- | --- | --- |
-| Dyslexic reader | _not yet recorded_ | — | — | — |
-| Low-vision reader | _not yet recorded_ | — | — | — |
-| Deaf / hard-of-hearing | _not yet recorded_ | — | — | — |
+| Reviewer kind          | Name               | Role | Date reviewed | Result |
+| ---------------------- | ------------------ | ---- | ------------- | ------ |
+| Dyslexic reader        | _not yet recorded_ | —    | —             | —      |
+| Low-vision reader      | _not yet recorded_ | —    | —             | —      |
+| Deaf / hard-of-hearing | _not yet recorded_ | —    | —             | —      |
 
 Until every row above is filled, **the app must not be tagged as a public release**.
 

@@ -3,6 +3,7 @@
 The app boots and the bundle loads cleanly. The regression is purely cosmetic: the feature screens were written as `<View><Text>x</Text></View>` stubs with no styling, no theme, no SafeArea, and no navigation chrome — which renders as a white page with a few upper-left text nodes. The fix is to actually build the `@garden/ui` primitives that the earlier specs promised, wire the providers, and put the app inside an expo-router Tabs layout.
 
 Pre-existing constraints that this change honors:
+
 - `accessibility` spec — pastel theme, Lexend default, OpenDyslexic opt-in, AAA toggle, ≥18sp, 1.55 line height, cross-modal redundancy.
 - `code-conventions-strict` — no string-literal unions, no `else if`, no `switch`, etc.
 - `mobile-architecture` — FSD layout; `app/` files are thin glue (≤30 lines), cross-feature imports only through `index.ts`.
@@ -11,6 +12,7 @@ Pre-existing constraints that this change honors:
 ## Goals / Non-Goals
 
 **Goals:**
+
 - Every tab renders with proper theming (pastel light in Pixel_9 default, dark-pastel toggleable in Settings).
 - Bottom tab navigation works; each of the 7 screens is reachable.
 - Capture screen has a visible viewfinder placeholder, prominent Scan button, verdict caption.
@@ -21,6 +23,7 @@ Pre-existing constraints that this change honors:
 - Screenshots of every tab committed to `apps/mobile/docs/screenshots/`.
 
 **Non-Goals:**
+
 - Camera preview with `expo-camera` live feed. Placeholder only.
 - Reanimated worklets + Skia overlays with real pose data. Static shapes only.
 - expo-sqlite persistence on device. The in-memory JS repository stays.
@@ -38,6 +41,7 @@ Pre-existing constraints that this change honors:
 ### D2. `ThemeProvider` composes `PaperProvider` with our token set
 
 **Chosen:** `@garden/ui`'s `ThemeProvider` takes a `themeId: ThemeId` prop (defaulting to `ThemeId.LightPastel`) plus an optional `fontFamily: FontFamily`. It:
+
 1. Calls `toPaperTheme(themes[themeId])` to produce the MD3 theme object.
 2. Renders Paper's `Provider` with that theme.
 3. Exposes the tokens via React context so primitives don't re-call `toPaperTheme`.
@@ -55,6 +59,7 @@ Screen files move to `app/(tabs)/<name>.tsx`. The root `app/_layout.tsx` renders
 ### D4. Primitives: a small, useful set — not a design system
 
 **Chosen:**
+
 - `Screen` — `SafeAreaView` + `View` with `flex: 1`, `backgroundColor: colors.background`, padding from tokens.
 - `Heading` — Paper `Text` variant="titleLarge", Lexend, `color: onSurface`, `accessibilityRole="header"`.
 - `Body` — Paper `Text` variant="bodyLarge", Lexend, `color: onSurface`, size ≥ 18 sp, line height 1.55.
@@ -117,6 +122,7 @@ After the first round of edits, the app still rendered raw text and ignored the 
 ## Migration Plan
 
 Same-session, linear:
+
 1. Install dev deps (`react-test-renderer`, `@testing-library/react-native` if needed).
 2. Build primitives in `@garden/ui`.
 3. Update `@garden/ui/src/index.ts` re-exports.

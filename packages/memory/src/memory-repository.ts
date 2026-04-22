@@ -27,6 +27,7 @@ export type MemoryRepository = {
 
   // --- Inventory + events (append-only) ---
   saveInventoryRecord: (record: InventoryRecord) => Promise<void>;
+  listInventoryRecords: () => Promise<ReadonlyArray<InventoryRecord>>;
   appendEvent: (event: InventoryEvent) => Promise<void>;
   listEventsByPin: (pinId: string) => Promise<ReadonlyArray<InventoryEvent>>;
   listEventsBySector: (sectorId: string) => Promise<ReadonlyArray<InventoryEvent>>;
@@ -36,6 +37,8 @@ export type MemoryRepository = {
   saveSector: (sector: Sector) => Promise<void>;
   getSector: (id: string) => Promise<Sector | undefined>;
   listSectorsByPlot: (plotId: string) => Promise<ReadonlyArray<Sector>>;
+  renameSector: (id: string, name: string) => Promise<void>;
+  deleteSector: (id: string) => Promise<void>;
 
   // --- Harvests (append-only) ---
   appendHarvest: (harvest: Harvest) => Promise<void>;
