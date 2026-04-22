@@ -1,0 +1,42 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "remoteCache": {
+    "enabled": false
+  },
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "tsconfig.json", "package.json"],
+      "outputs": ["dist/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "tsconfig.json", "tsconfig.base.json"],
+      "outputs": []
+    },
+    "lint": {
+      "inputs": ["src/**", ".eslintrc.cjs", "../../.eslintrc.cjs"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**",
+        "__tests__/**",
+        "jest.config.ts",
+        "../../jest.preset.ts"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "apk": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**", "app/**", "app.json", "eas.json"],
+      "outputs": ["android/app/build/outputs/**"],
+      "cache": false
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

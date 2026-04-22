@@ -1,0 +1,30 @@
+{
+  "name": "@garden/engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compliance rules, species matcher, rotation advisor, nutrient/irrigation advisor, reasoning adapter.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint \"src/**/*.ts\"",
+    "test": "jest --passWithNoTests",
+    "audit:citations": "tsx src/scripts/audit-citations.ts",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@garden/config": "workspace:*",
+    "@garden/core": "workspace:*",
+    "@garden/memory": "workspace:*"
+  },
+  "peerDependencies": {
+    "@anthropic-ai/sdk": "*"
+  },
+  "peerDependenciesMeta": {
+    "@anthropic-ai/sdk": { "optional": true }
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}

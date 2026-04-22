@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@garden/config": ["packages/config/src/index.ts"],
+      "@garden/config/*": ["packages/config/src/*"],
+      "@garden/core": ["packages/core/src/index.ts"],
+      "@garden/core/*": ["packages/core/src/*"],
+      "@garden/memory": ["packages/memory/src/index.ts"],
+      "@garden/memory/*": ["packages/memory/src/*"],
+      "@garden/engine": ["packages/engine/src/index.ts"],
+      "@garden/engine/*": ["packages/engine/src/*"],
+      "@garden/ui": ["packages/ui/src/index.ts"],
+      "@garden/ui/*": ["packages/ui/src/*"]
+    }
+  }
+}

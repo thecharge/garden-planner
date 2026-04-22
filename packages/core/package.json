@@ -1,0 +1,18 @@
+{
+  "name": "@garden/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pure primitives: Protocol, summary, event factories, sensor fusion, ET0 kernel, pH helpers.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint \"src/**/*.ts\"",
+    "test": "jest --passWithNoTests",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@garden/config": "workspace:*"
+  }
+}

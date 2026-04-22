@@ -137,3 +137,33 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# monorepo
+.turbo/
+
+# expo / react native
+.expo/
+expo-env.d.ts
+android/
+android/app/build/
+android/.gradle/
+ios/
+ios/build/
+*.apk
+*.aab
+*.keystore
+
+# coverage
+coverage/
+
+# local env
+.env.local
+.env.*.local
+
+# no-sudo JDK/SDK caches (in case the user vendors them at repo root)
+.jdks/
+Android/
+.gradle/
+
+# cspell
+.cspell-cache

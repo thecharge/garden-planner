@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# Pre-commit hygiene — fast, staged-file-only. Security audit and coverage run in CI.
+pnpm exec lint-staged

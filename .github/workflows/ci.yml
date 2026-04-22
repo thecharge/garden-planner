@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm turbo run typecheck
+
+      - name: Lint
+        run: pnpm turbo run lint
+
+      - name: Test (with coverage)
+        run: pnpm test:coverage
+
+      - name: Spell check
+        run: pnpm spell
+
+      - name: Citations audit (engine data files must carry sourceCitation)
+        run: pnpm audit:citations
+
+      - name: Contrast audit (theme tokens must meet WCAG AA / AAA)
+        run: pnpm audit:contrast
+
+      - name: Security audit (non-blocking baseline)
+        run: pnpm audit:deps
+
+      - name: Union-literal backstop (zero residuals in non-test code)
+        run: |
+          set -eu
+          matches=$(grep -rn -E '= "[^"]+" \| "' packages apps --include='*.ts' --include='*.tsx' \
+            | grep -v __tests__ | grep -v node_modules || true)
+          if [ -n "$matches" ]; then
+            echo "String-literal unions detected — convert to const + type."
+            echo "$matches"
+            exit 1
+          fi
+
+      - name: Redux absence check
+        run: |
+          set -eu
+          # Only check workspace package.json manifests (not node_modules tree).
+          hits=$(grep -lE '"(redux|@reduxjs/toolkit|redux-saga)"' \
+            packages/*/package.json apps/*/package.json 2>/dev/null | grep -v node_modules || true)
+          if [ -n "$hits" ]; then
+            echo "Redux family dep found in workspace manifests — forbidden per mobile-architecture spec."
+            echo "$hits"
+            exit 1
+          fi
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            packages/*/coverage/**
+            apps/*/coverage/**
+          if-no-files-found: ignore

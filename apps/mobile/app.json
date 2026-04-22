@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Garden Planner",
+    "slug": "garden-planner",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "platforms": ["android"],
+    "scheme": "gardenplanner",
+    "plugins": [
+      "expo-router",
+      "expo-camera",
+      "expo-location",
+      "expo-sqlite",
+      "expo-secure-store",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Lexend-Regular.ttf",
+            "./assets/fonts/Lexend-Bold.ttf",
+            "./assets/fonts/OpenDyslexic-Regular.otf"
+          ]
+        }
+      ]
+    ],
+    "android": {
+      "package": "com.chepinci.gardenplanner",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
