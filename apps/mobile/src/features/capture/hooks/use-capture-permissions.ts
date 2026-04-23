@@ -35,7 +35,11 @@ const readMotionGranted = async (): Promise<boolean> => {
     return true;
   }
   try {
-    const getter = (DeviceMotion as unknown as { getPermissionsAsync?: () => Promise<{ status?: string; granted?: boolean }> }).getPermissionsAsync;
+    const getter = (
+      DeviceMotion as unknown as {
+        getPermissionsAsync?: () => Promise<{ status?: string; granted?: boolean }>;
+      }
+    ).getPermissionsAsync;
     if (!getter) {
       return true;
     }

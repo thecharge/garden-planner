@@ -222,25 +222,30 @@ The plaintext key never appears in any list or page of the app after you save.
 
 Captured from the Pixel 9 emulator running the actual app:
 
-| Flow                                       | Screenshot                                                                   |
-| ------------------------------------------ | ---------------------------------------------------------------------------- |
-| Capture tab                                | ![Capture](docs/screenshots/00-capture-tab.png)                              |
-| Sectors — empty                            | ![Sectors empty](docs/screenshots/01-sectors-empty.png)                      |
-| Sector added                               | ![Sector added](docs/screenshots/02-sector-added.png)                        |
-| Empty-name rejection                       | ![Empty name rejected](docs/screenshots/16-sectors-empty-name-rejection.png) |
-| Sector detail (rename + harvest form)      | ![Sector detail](docs/screenshots/03-sector-detail.png)                      |
-| Harvest logged                             | ![Harvest logged](docs/screenshots/04-harvest-logged.png)                    |
-| Yield tab — 1.3 kg roll-up                 | ![Yield](docs/screenshots/05-yield-tab.png)                                  |
-| Inventory tab — empty                      | ![Inventory empty](docs/screenshots/06-inventory-empty.png)                  |
-| Inventory record form filled               | ![Record filled](docs/screenshots/07-inventory-record-form.png)              |
-| Recent records + events                    | ![Recent list](docs/screenshots/08-inventory-recent.png)                     |
-| Settings                                   | ![Settings](docs/screenshots/09-settings-initial.png)                        |
-| Anthropic key typed (secureTextEntry dots) | ![Key typed](docs/screenshots/10-settings-key-typed.png)                     |
-| Key saved (masked + Clear)                 | ![Key saved](docs/screenshots/11-settings-key-saved.png)                     |
-| Key cleared (back to paste state)          | ![Key cleared](docs/screenshots/15-settings-key-cleared.png)                 |
-| Theme — Dark pastel live-switch            | ![Dark pastel](docs/screenshots/12-theme-dark.png)                           |
-| Theme — High contrast AAA                  | ![AAA](docs/screenshots/13-theme-aaa.png)                                    |
-| Theme — Light pastel                       | ![Light pastel](docs/screenshots/14-theme-light.png)                         |
+| Flow                                            | Screenshot                                                                   |
+| ----------------------------------------------- | ---------------------------------------------------------------------------- |
+| Capture — permission gated (first run)          | ![Gated](docs/screenshots/17-capture-permission-gated.png)                   |
+| Capture — permissions rationale screen          | ![Rationale](docs/screenshots/18-capture-permissions-rationale.png)          |
+| Capture — live viewfinder (calibration pattern) | ![Viewfinder 1](docs/screenshots/19-capture-live-viewfinder.png)             |
+| Capture — live viewfinder (indoor scene)        | ![Viewfinder 2](docs/screenshots/20-capture-viewfinder-wood.png)             |
+| Capture — all permissions granted, Scan ready   | ![Scan ready](docs/screenshots/21-capture-scan-enabled.png)                  |
+| Capture — old mock screen (historical)          | ![Capture](docs/screenshots/00-capture-tab.png)                              |
+| Sectors — empty                                 | ![Sectors empty](docs/screenshots/01-sectors-empty.png)                      |
+| Sector added                                    | ![Sector added](docs/screenshots/02-sector-added.png)                        |
+| Empty-name rejection                            | ![Empty name rejected](docs/screenshots/16-sectors-empty-name-rejection.png) |
+| Sector detail (rename + harvest form)           | ![Sector detail](docs/screenshots/03-sector-detail.png)                      |
+| Harvest logged                                  | ![Harvest logged](docs/screenshots/04-harvest-logged.png)                    |
+| Yield tab — 1.3 kg roll-up                      | ![Yield](docs/screenshots/05-yield-tab.png)                                  |
+| Inventory tab — empty                           | ![Inventory empty](docs/screenshots/06-inventory-empty.png)                  |
+| Inventory record form filled                    | ![Record filled](docs/screenshots/07-inventory-record-form.png)              |
+| Recent records + events                         | ![Recent list](docs/screenshots/08-inventory-recent.png)                     |
+| Settings                                        | ![Settings](docs/screenshots/09-settings-initial.png)                        |
+| Anthropic key typed (secureTextEntry dots)      | ![Key typed](docs/screenshots/10-settings-key-typed.png)                     |
+| Key saved (masked + Clear)                      | ![Key saved](docs/screenshots/11-settings-key-saved.png)                     |
+| Key cleared (back to paste state)               | ![Key cleared](docs/screenshots/15-settings-key-cleared.png)                 |
+| Theme — Dark pastel live-switch                 | ![Dark pastel](docs/screenshots/12-theme-dark.png)                           |
+| Theme — High contrast AAA                       | ![AAA](docs/screenshots/13-theme-aaa.png)                                    |
+| Theme — Light pastel                            | ![Light pastel](docs/screenshots/14-theme-light.png)                         |
 
 ---
 
