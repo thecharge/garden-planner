@@ -2,7 +2,20 @@
 
 Ten steps, plain language, in order. No developer account. No Play Store.
 
-If you built the APK yourself via `pnpm apk`, your file is under `apps/mobile/android/app/build/outputs/apk/release/app-release.apk`. Otherwise someone handed you an `.apk` — the file you need to install.
+If you built the APK yourself, follow the quick recipe below before step 1 — or skip it if someone handed you an `.apk`.
+
+```bash
+. ./scripts/setup-env.sh
+pnpm --filter apps-mobile run apk:local
+```
+
+This runs `expo prebuild --platform android` then `./gradlew assembleRelease`. On first build it takes 10-15 minutes because Gradle downloads every dependency. Subsequent builds are ~1 minute. The finished file lives at:
+
+```
+apps/mobile/android/app/build/outputs/apk/release/app-release.apk
+```
+
+~170 MB today. Most of it is Skia + Hermes + the JS bundle.
 
 ---
 
@@ -53,13 +66,17 @@ Alternatively find the **Garden Planner** icon in the app drawer.
 
 ## 8. Accept permissions on first run
 
-The app asks for:
+When you open the **Capture** tab for the first time, the **Scan** button is greyed out and a caption tells you which permissions are missing. Tap the **Grant access** button beneath the caption. A rationale screen appears with three rows:
 
-- **Camera** — maps the slope.
-- **Microphone** — reads spoken commands (when voice-in lands).
-- **Location** — ties data to your plot.
+- **Camera** — lets the viewfinder show the slope you are scanning.
+- **Location** — pins the scan coordinate to your plot.
+- **Motion (compass + gyroscope)** — reads pitch and heading for the slope calculation.
 
-Tap **Allow** for each.
+Tap **Grant access** on that rationale screen. Android will pop **three system dialogs** in sequence, one per permission. Tap **While using the app** for each one.
+
+Once all three say **Granted**, tap **Back to Capture**. The Scan button turns on. **Pin the property-line distance** in the text input above the button (metres — try `3.5`) before your first real scan. Without it, the compliance verdict will be _"Pin the property line distance..."_ rather than a pass/fail.
+
+Microphone and voice-in permissions arrive in a later change (`make-voice-stt-real`). Today the app talks to _you_, not the other way around.
 
 ## 9. Paste your Anthropic key (optional)
 
@@ -73,11 +90,12 @@ The key is stored in Android's secure store. Nothing leaves the phone.
 
 ## 10. You are done
 
-- Add a sector in the **Sectors** tab.
-- Log a harvest from the sector detail screen.
-- Change the theme in **Settings**.
+- Tap **Scan** on the Capture tab and pan the phone slowly across a slope for three seconds. Listen for the spoken verdict.
+- Add a sector in the **Sectors** tab. Log a harvest from the sector detail screen.
+- Open the **Yield** tab — the year-over-year table fills with your first row the moment you log a harvest. Tap **Export yield history** to share the CSV to email or Drive.
+- Flip the theme in **Settings**. The whole app re-colours live. Turn **Voice (TTS)** or **Haptics** off if you want a quiet device.
 
-If anything breaks, read [HOW-TO.md](HOW-TO.md) or open an issue.
+If anything breaks, read [HOW-TO.md](HOW-TO.md) or open an issue. Status of every feature lives in [docs/STATUS.md](docs/STATUS.md).
 
 ---
 
