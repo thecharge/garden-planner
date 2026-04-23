@@ -13,10 +13,13 @@ import {
   TextInput,
   useThemeTokens
 } from "@garden/ui";
+import { SmepError } from "@garden/config";
+import { summary } from "@garden/core";
 import { useCapturePermissions } from "../hooks/use-capture-permissions";
 import { useComplianceVerdict } from "../hooks/use-compliance-verdict";
 import { captureProtocol, expoLocationAdapter, expoMotionAdapter } from "@/engine/capture-driver";
 import { createLogger } from "@/core/logger";
+import { useAnnounce } from "@/core/announce";
 import { config } from "@/core/config";
 
 const log = createLogger("capture-screen");
@@ -27,6 +30,7 @@ export const CaptureScreen = () => {
   const router = useRouter();
   const perms = useCapturePermissions();
   const verdict = useComplianceVerdict();
+  const announce = useAnnounce();
   const [propertyLineMeters, setPropertyLineMeters] = useState<string>("");
   const [scanBusy, setScanBusy] = useState(false);
 
@@ -52,11 +56,19 @@ export const CaptureScreen = () => {
       });
       verdict.mutate(protocol);
     } catch (err) {
-      log.warn("scan failed", { name: err instanceof Error ? err.name : "unknown" });
+      const message =
+        err instanceof SmepError
+          ? "Pan the camera across the slope for three full seconds and try again."
+          : "Scan failed. Try again.";
+      log.warn("scan failed", {
+        name: err instanceof Error ? err.name : "unknown",
+        code: err instanceof SmepError ? err.code : undefined
+      });
+      void announce(summary.actionRequired(message));
     } finally {
       setScanBusy(false);
     }
-  }, [perms.allGranted, scanBusy, propertyLineMeters, verdict]);
+  }, [perms.allGranted, scanBusy, propertyLineMeters, verdict, announce]);
 
   const captionText =
     scanBusy || verdict.isPending
@@ -82,7 +94,7 @@ export const CaptureScreen = () => {
           }}
         >
           {perms.camera ? (
-            <CameraView style={{ flex: 1 }} />
+            <CameraView style={{ flex: 1 }} facing="back" />
           ) : (
             <View
               style={{
