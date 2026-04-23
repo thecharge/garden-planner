@@ -29,23 +29,64 @@ Each step writes exactly one row to the right table. The next step reads that ro
 
 ## 1. Capture
 
-**User action:** point the camera at a slope on the Capture tab.
+**User action:** open the Capture tab, pan the camera across a slope for three seconds, tap Scan.
 
-**What the engine does:**
+### Permission gate
 
-- `capture-driver.ts` reads `expo-camera` frames, `expo-sensors` device motion, `expo-location`.
-- It produces a `Protocol` (see `@garden/config/types/protocol.ts`):
-  ```ts
-  type Protocol = {
-    id: string;
-    capturedAt: string; // ISO
-    confidence: number; // 0..1
-    data: ScanData; // slope, orientation, water-table depth, ...
-  };
-  ```
-- `MemoryRepository.saveProtocol(protocol)` stores it with status `TaskStatus.InProgress`.
+`apps/mobile/src/features/capture/hooks/use-capture-permissions.ts` aggregates three reads (`expo-camera.getCameraPermissionsAsync`, `expo-location.getForegroundPermissionsAsync`, `expo-sensors.DeviceMotion.getPermissionsAsync`) and re-polls on `AppState` change → `active`. When any permission is `undetermined` or `denied`, the Capture screen:
 
-**Engine pure-logic reference:** `packages/core/src/protocol.ts`.
+- Disables the **Scan** button.
+- Shows a `Caption` variant `actionRequired` with the missing-permission reason.
+- Renders a **Grant access** button that routes to `/capture/permissions`.
+
+The rationale route (`apps/mobile/app/capture/permissions.tsx` → `apps/mobile/src/features/capture/components/permissions-screen.tsx`) has one Grant button that calls `perms.request()` → `Promise.all(requestCamera, requestLocation, requestMotion)` and refreshes. When all three return `granted`, it navigates back.
+
+### The capture driver
+
+`apps/mobile/src/engine/capture-driver.ts` exports a single async function:
+
+```ts
+export const captureProtocol = async (
+  deps: { motion: MotionAdapter; location: LocationAdapter },
+  opts: CaptureOptions
+): Promise<Protocol>;
+```
+
+- `deps.motion` defaults to `expoMotionAdapter`, which wraps `DeviceMotion.addListener` and forwards `{ pitchRad, headingRad }` samples. Tests pass a deterministic adapter that emits a seed array.
+- `deps.location` defaults to `expoLocationAdapter`, which tries `getLastKnownPositionAsync` first, falls back to `getCurrentPositionAsync` with a 3 s race timeout.
+- The driver subscribes for `config.CAPTURE_WINDOW_MS` (default 3000 ms), averages the pitch samples for `data.slopeDegree` (converted rad → deg), averages the heading samples for `data.orientationDegrees`, and reads one location fix for `data.elevationMeters` (altitude is optional — Samsung phones do not always report it).
+- `data.distanceToPropertyLine` comes from the user-pinned numeric input above the viewfinder, _not_ from sensors. `data.waterTableDepth` is left `undefined` today — the nutrient feature will let users log it later.
+- Missing samples → `SmepErrors.captureTooShort()`. The Capture screen catches the typed error and announces `summary.actionRequired("Pan the camera across the slope for three full seconds and try again.")`.
+
+### What happens on Scan
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant S as CaptureScreen
+    participant D as capture-driver
+    participant M as DeviceMotion
+    participant L as Location
+    participant E as compliance engine
+    participant A as announce()
+
+    U->>S: tap Scan
+    S->>D: captureProtocol(deps, opts)
+    D->>M: subscribe (100 ms interval)
+    D->>L: fetchOnce (3 s deadline)
+    Note over D,M: 3 s window — pitch + heading samples accumulate
+    M-->>D: N samples
+    L-->>D: lat/lon (+ altitude when available)
+    D-->>S: Protocol { id, slopeDegree, orientationDegrees, elevationMeters, distanceToPropertyLine? }
+    S->>E: verdict.mutate(protocol)
+    E-->>S: Summary { type, message, meta? }
+    S->>A: announce(summary)
+    A->>A: TTS (expo-speech) + caption (store) + haptic (expo-haptics)
+```
+
+Every path — happy, side, failure — ends at `announce(summary)`. If `captureProtocol` throws a `SmepError`, the screen announces the plain-language recovery step directly.
+
+**Engine pure-logic reference:** `packages/core/src/protocol.ts`. The `ScanData` type relaxes `distanceToPropertyLine` and `waterTableDepth` to optional — missing fields route to `summary.actionRequired` in the compliance rules instead of silently passing.
 
 ---
 

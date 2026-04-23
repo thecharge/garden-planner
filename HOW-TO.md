@@ -78,13 +78,13 @@ Before the first scan, type the perpendicular distance (in metres) from where yo
 3. Pan the phone slowly from left to right across the slope. Keep the pan smooth — no jerks. The driver averages your pitch across the three seconds; jerky motion lowers confidence.
 4. When the window ends, the compliance engine runs. One of four things happens:
 
-   | Spoken verdict                                             | What it means                                                                                                                             |
-   | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-   | _"Grading plan is compliant and ecologically sound."_      | Slope is below the unpermitted threshold, setback is safe, water table is deep enough.                                                    |
-   | _"Slope exceeds N degrees. Micro-permit specs generated."_ | The engine has drafted a micro-permit spec and saved it to the notebook. Show it at the municipal office.                                 |
-   | _"High water table detected..."_                           | Fires only if you have logged a shallow water table on the plot. The advisory tells you to plant deep-rooting shrubs before you grade.    |
-   | _"Retaining wall breaches municipal setback limits."_      | Your pinned property-line distance is below the 1.5 m municipal setback. Re-pin from a compliant spot, or redesign.                       |
-   | _"Pan the camera... and try again."_                       | The driver did not collect enough motion samples. You held the phone still or tapped Scan twice. Pan for three full seconds.              |
+   | Spoken verdict                                             | What it means                                                                                                                          |
+   | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+   | _"Grading plan is compliant and ecologically sound."_      | Slope is below the unpermitted threshold, setback is safe, water table is deep enough.                                                 |
+   | _"Slope exceeds N degrees. Micro-permit specs generated."_ | The engine has drafted a micro-permit spec and saved it to the notebook. Show it at the municipal office.                              |
+   | _"High water table detected..."_                           | Fires only if you have logged a shallow water table on the plot. The advisory tells you to plant deep-rooting shrubs before you grade. |
+   | _"Retaining wall breaches municipal setback limits."_      | Your pinned property-line distance is below the 1.5 m municipal setback. Re-pin from a compliant spot, or redesign.                    |
+   | _"Pan the camera... and try again."_                       | The driver did not collect enough motion samples. You held the phone still or tapped Scan twice. Pan for three full seconds.           |
 
    Every verdict fires **TTS + caption + haptic** together — if the earbuds are in, you do not need to look at the screen.
 
