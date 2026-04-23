@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppState } from "react-native";
-import * as Camera from "expo-camera";
+import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import { DeviceMotion } from "expo-sensors";
 import { createLogger } from "@/core/logger";
