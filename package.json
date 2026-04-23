@@ -23,8 +23,10 @@
     "audit:contrast": "pnpm --filter @garden/ui run audit:contrast",
     "check:all": "pnpm typecheck && pnpm lint && pnpm test && pnpm spell && pnpm format:check && pnpm audit:citations && pnpm audit:contrast",
     "dev": "bash scripts/dev.sh",
+    "dev:release": "bash scripts/dev.sh release",
     "dev:stop": "bash scripts/dev-stop.sh",
     "doctor": "bash scripts/doctor.sh",
+    "sideload": "bash scripts/sideload.sh",
     "apk": "pnpm --filter apps-mobile run apk:local",
     "clean": "turbo run clean && rm -rf node_modules"
   },
