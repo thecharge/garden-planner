@@ -16,7 +16,10 @@ const scoreSiteFit = (species: SpeciesRecord, scan: Protocol, soil?: SoilSample)
   if (scan.data.slopeDegree <= species.siteFit.slopeMaxDegrees) {
     score += 2;
   }
-  if (scan.data.waterTableDepth >= species.siteFit.waterTableMinDepthMeters) {
+  if (
+    scan.data.waterTableDepth !== undefined &&
+    scan.data.waterTableDepth >= species.siteFit.waterTableMinDepthMeters
+  ) {
     score += 2;
   }
   if (soil && soil.pH >= species.phMin && soil.pH <= species.phMax) {
@@ -34,7 +37,10 @@ const reasonFor = (species: SpeciesRecord, scan: Protocol, soil?: SoilSample): s
   if (scan.data.slopeDegree <= species.siteFit.slopeMaxDegrees) {
     parts.push(`slope ${scan.data.slopeDegree}° ≤ max ${species.siteFit.slopeMaxDegrees}°`);
   }
-  if (scan.data.waterTableDepth >= species.siteFit.waterTableMinDepthMeters) {
+  if (
+    scan.data.waterTableDepth !== undefined &&
+    scan.data.waterTableDepth >= species.siteFit.waterTableMinDepthMeters
+  ) {
     parts.push(`water table ${scan.data.waterTableDepth}m adequate`);
   }
   if (soil && soil.pH >= species.phMin && soil.pH <= species.phMax) {

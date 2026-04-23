@@ -1,8 +1,12 @@
 # Garden Planner
 
-A local-first, voice-led, accessibility-first spatial garden planner.
+A local-first, accessibility-first garden planner for home growers and small farmers in **Chepinci (Sofia basin, Bulgaria)**. Side-loaded as an Android `.apk`.
 
-Made first for home growers and small farmers in **Chepinci (Sofia basin, Bulgaria)**. Side-loaded as an Android `.apk`. Voice in, whisper out, camera maps the yard. Remembers sectors, year-over-year yield, and what the science says to rotate into next spring.
+> **Reality check first.** This README describes the vision _and_ what actually ships. Read **[docs/STATUS.md](docs/STATUS.md)** before you trust a claim on this page — it's the ground truth with `file:line` evidence. If the two disagree, STATUS wins.
+>
+> Shipped today (tested, reproducible on emulator): sectors CRUD, harvest log, **real two-column year-over-year yield table with CSV export**, inventory records + events, rotation advisor, FAO-56 irrigation target, Anthropic BYOK paste-and-save, theme live-switch, **real camera capture (expo-camera + DeviceMotion + Location) gated behind a permissions rationale screen**, **voice output (TTS + haptics + persistent caption bar) fired on every mutation**, splash-screen handshake.
+>
+> Designed but **not yet wired** (tracked in OpenSpec changes): STT voice input (`make-voice-stt-real`), Skia/Reanimated overlays (`make-spatial-overlay-real`), SQLite persistence (`make-device-sqlite-adapter`), native BG translations (reviewer sign-off).
 
 ## Run it
 
@@ -25,16 +29,18 @@ Everything else is one layer below:
 - **[ACCESSIBILITY.md](ACCESSIBILITY.md)** — reviewer sign-off ledger; release gate.
 - **[openspec/changes/](openspec/changes/)** — the spec-driven design trail for every change.
 
-## What makes this different
+## What makes this different — vision vs. what ships
 
-A standard SaaS garden planner lets you drag cartoon trees over a 2D grid and assumes your soil is perfect and your climate average. This one negotiates the real plot you are standing on — its slope, its water table, its legal setbacks — and keeps a permanent record of what grew, where, and how well.
+A standard SaaS garden planner lets you drag cartoon trees over a 2D grid and assumes your soil is perfect and your climate average. This one aims to negotiate the real plot you are standing on — its slope, water table, legal setbacks — and keep a permanent record of what grew, where, and how well.
 
-- **Spatial capture** — pan the camera, get a `Protocol` (slope, orientation, water-table depth, confidence).
-- **Compliance engine** — Sofia-basin setback / slope / water-table rules; every verdict cites its source.
-- **Rotation + nutrient advisor** — science-backed (crop families, Liebig's Law, FAO-56 Penman-Monteith ET₀).
-- **Voice-first, always-captioned** — earbuds in, phone in pocket; captions for every spoken word.
-- **Accessibility as baseline** — neutral pastel + dark + AAA high-contrast; Lexend default / OpenDyslexic opt-in; cross-modal redundancy.
-- **Local-first, BYOK** — pure-JS in-memory repo today (SQLite follow-up); Anthropic key in `expo-secure-store`; nothing leaves the phone without consent.
+Each bullet below is tagged: ✅ works today, 🟡 partial, 🔴 designed but not yet implemented. See [STATUS.md](docs/STATUS.md) for evidence.
+
+- 🔴 **Spatial capture** — the vision is "pan the camera, get a `Protocol`". Today the Viewfinder is a placeholder `<View>` and **Scan** fabricates a hardcoded Protocol. Real capture lands in `make-capture-voice-yoy-real`. Do not rely on capture numbers.
+- ✅ **Compliance engine** — Sofia-basin setback / slope / water-table rules; every verdict cites its source. Pure-engine, tested. Runs against whatever Protocol is fed in, including the current mock.
+- ✅ **Rotation + irrigation advisor** — science-backed (crop families, FAO-56 Penman-Monteith ET₀, Kc stage curves). 🟡 Liebig amendment UI is still a stub.
+- 🔴 **Voice** — the vision is "earbuds in, phone in pocket, captions for every spoken word". Today nothing is wired: no TTS, no STT, no haptics. `announce()` exists in `@garden/ui`; the device channels are not connected. Tracked in the same change.
+- ✅ **Accessibility tokens** — neutral pastel + dark + AAA high-contrast; Lexend default / OpenDyslexic opt-in; contrast audited in CI. **The cross-modal contract is defined but not fired** (see voice row).
+- 🟡 **Local-first, BYOK** — today the notebook is an **in-memory `Map`** (lost on reinstall); SQLite adapter tracked in `make-device-sqlite-adapter`. Anthropic key _is_ persisted in `expo-secure-store` (paste + mask + clear all shipped).
 
 ## User flows that actually work today
 
@@ -165,11 +171,11 @@ apps/mobile/src/
 
 A feature silo is deletable (minus its route) without breaking the rest of the app. Cross-feature imports only through the feature's `index.ts`.
 
-**State:** TanStack Query for everything through `MemoryRepository` and the reasoning provider; Zustand for client UI state; a Zustand **transient** store for the 60 Hz spatial pose (so capture does not melt React's render loop). Reanimated worklets and Skia canvas read from the transient store directly.
+**State:** TanStack Query for everything through `MemoryRepository` and the reasoning provider; Zustand for client UI state; a Zustand **transient** store for the spatial pose. ⚠️ The "Reanimated worklets and Skia canvas read from the transient store directly" line describes the target architecture; neither dir is implemented in `apps/mobile/src/engine/` today (see [STATUS.md](docs/STATUS.md) row 10).
 
 **Theme live-switch:** the root `_layout.tsx` wraps the app in `SettingsThemeProvider` (in `apps/mobile/src/core/theme/`). The wrapper subscribes to `settingsStore.themeId` via `zustand`'s `useStore` and passes the active id into `@garden/ui`'s `ThemeProvider`. Flipping the theme in Settings re-renders every mounted screen without a restart. `@garden/ui` stays decoupled from the mobile settings store.
 
-**Accessibility pattern:** every spoken utterance is also a persistent caption _and_ a haptic buzz. `announce(summary)` in `@garden/ui` is the single point where this contract is enforced. Invisible transparent `View`s overlaid on spatial objects let TalkBack focus 3D things.
+**Accessibility contract:** every verdict is _designed_ to produce TTS + caption + haptic via `announce(summary)` in `@garden/ui`. ⚠️ The design is complete; the device channels (expo-speech / expo-haptics / caption store) are being wired in `make-capture-voice-yoy-real`. Until then, no verdict is audible.
 
 ## License
 

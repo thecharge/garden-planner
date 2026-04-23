@@ -24,6 +24,7 @@ export type SettingsState = {
   readonly fontScaleStep: FontScaleStep;
   readonly motionReduced: boolean;
   readonly hapticsEnabled: boolean;
+  readonly voiceEnabled: boolean;
   readonly captionsMode: CaptionsMode;
   readonly anthropicKeyConfigured: boolean;
 };
@@ -34,6 +35,7 @@ export type SettingsStore = SettingsState & {
   readonly setFontScale: (step: FontScaleStep) => void;
   readonly setMotionReduced: (reduced: boolean) => void;
   readonly setHapticsEnabled: (enabled: boolean) => void;
+  readonly setVoiceEnabled: (enabled: boolean) => void;
   readonly setCaptionsMode: (mode: CaptionsMode) => void;
   readonly setAnthropicKeyConfigured: (configured: boolean) => void;
 };
@@ -44,6 +46,7 @@ export const settingsStore = createStore<SettingsStore>((set) => ({
   fontScaleStep: FontScaleStep.Zero,
   motionReduced: false,
   hapticsEnabled: true,
+  voiceEnabled: true,
   captionsMode: CaptionsMode.AlwaysOn,
   anthropicKeyConfigured: false,
   setTheme: (themeId) => set({ themeId }),
@@ -51,6 +54,7 @@ export const settingsStore = createStore<SettingsStore>((set) => ({
   setFontScale: (fontScaleStep) => set({ fontScaleStep }),
   setMotionReduced: (motionReduced) => set({ motionReduced }),
   setHapticsEnabled: (hapticsEnabled) => set({ hapticsEnabled }),
+  setVoiceEnabled: (voiceEnabled) => set({ voiceEnabled }),
   setCaptionsMode: (captionsMode) => set({ captionsMode }),
   setAnthropicKeyConfigured: (anthropicKeyConfigured) => set({ anthropicKeyConfigured })
 }));

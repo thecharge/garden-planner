@@ -173,7 +173,18 @@
     "Vosk",
     "Kotlin",
     "Gradle",
-    "cadastral"
+    "cadastral",
+    "prereq",
+    "prereqs",
+    "geolocation",
+    "sideloads",
+    "worklet",
+    "worklets",
+    "colour",
+    "colours",
+    "Paper-wrapped",
+    "whisper.cpp",
+    "fallbacks"
   ],
   "flagWords": []
 }

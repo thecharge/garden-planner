@@ -22,8 +22,13 @@ export { sofiaFallbackClimate, SOFIA_CLIMATOLOGY_CITATION } from "./nutrient/cli
 export { adviseAmendments, adviseWater } from "./nutrient/advisor";
 export type { AdviseAmendmentsResult } from "./nutrient/advisor";
 
-export { yieldBySectorAndYear, plantingsBySectorAndYear, heatmapData } from "./aggregation/yield";
-export type { HeatmapTile } from "./aggregation/yield";
+export {
+  yieldBySectorAndYear,
+  plantingsBySectorAndYear,
+  heatmapData,
+  yoyBySectorAndSpecies
+} from "./aggregation/yield";
+export type { HeatmapTile, YoyRow } from "./aggregation/yield";
 
 export { createReasoningRouter } from "./reasoning/provider";
 export type {

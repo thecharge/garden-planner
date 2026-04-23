@@ -4,13 +4,19 @@ import type { Protocol, ScanData } from "@garden/config";
 const isFiniteNumber = (value: unknown): value is number =>
   typeof value === "number" && Number.isFinite(value);
 
-const requiredScanKeys: ReadonlyArray<keyof ScanData> = [
+const requiredScanKeys: ReadonlyArray<keyof ScanData> = ["slopeDegree"];
+
+const optionalNumericKeys: ReadonlyArray<keyof ScanData> = [
   "distanceToPropertyLine",
-  "slopeDegree",
-  "waterTableDepth"
+  "waterTableDepth",
+  "orientationDegrees",
+  "elevationMeters"
 ];
 
-/** Validate the numeric invariants of a ScanData block. Throws SmepErrors.protocolEmpty on failure. */
+/** Validate the numeric invariants of a ScanData block. Only `slopeDegree` is
+ * required; optional numeric fields must be finite numbers when present. Throws
+ * SmepErrors.protocolEmpty on failure.
+ */
 export const validateScanData = (data: unknown): data is ScanData => {
   if (data === null || data === undefined || typeof data !== "object") {
     throw SmepErrors.protocolEmpty();
@@ -18,6 +24,11 @@ export const validateScanData = (data: unknown): data is ScanData => {
   const record = data as Record<string, unknown>;
   for (const key of requiredScanKeys) {
     if (!isFiniteNumber(record[key])) {
+      throw SmepErrors.protocolEmpty();
+    }
+  }
+  for (const key of optionalNumericKeys) {
+    if (record[key] !== undefined && !isFiniteNumber(record[key])) {
       throw SmepErrors.protocolEmpty();
     }
   }

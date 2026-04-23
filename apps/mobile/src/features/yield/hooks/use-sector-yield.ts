@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { heatmapData, yieldBySectorAndYear } from "@garden/engine";
 import type { HeatmapTile } from "@garden/engine";
 import type { Harvest } from "@garden/config";
+import { summary } from "@garden/core";
 import { getMemoryRepository } from "@/core/query/repository";
+import { useAnnounce } from "@/core/announce";
 
 export const useSectorYield = (sectorId: string, year: number) =>
   useQuery<ReadonlyMap<string, number>>({
@@ -33,6 +35,7 @@ export const useHarvestsBySector = (sectorId: string) =>
 
 export const useAppendHarvest = () => {
   const qc = useQueryClient();
+  const announce = useAnnounce();
   return useMutation<void, Error, Harvest>({
     mutationFn: async (h) => {
       const repo = await getMemoryRepository();
@@ -42,6 +45,11 @@ export const useAppendHarvest = () => {
       void qc.invalidateQueries({ queryKey: ["harvests", h.sectorId] });
       void qc.invalidateQueries({ queryKey: ["heatmap"] });
       void qc.invalidateQueries({ queryKey: ["yield", h.sectorId] });
+      void qc.invalidateQueries({ queryKey: ["yoy"] });
+      void announce(summary.success(`Harvest of ${h.weightGrams} g logged`));
+    },
+    onError: () => {
+      void announce(summary.actionRequired("Could not log harvest. Try again."));
     }
   });
 };

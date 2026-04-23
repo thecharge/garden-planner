@@ -79,5 +79,47 @@ export const heatmapData = async (
   return tiles;
 };
 
+export type YoyRow = {
+  readonly sectorId: string;
+  readonly speciesId: string;
+  readonly currentGrams: number;
+  readonly priorGrams: number;
+  readonly deltaGrams: number;
+  readonly deltaPct: number | null;
+};
+
+/** Year-over-year yield: for every sector × species with a harvest in either
+ * year, emit the current and prior gram totals + the signed delta. Sorted by
+ * abs(deltaGrams) descending so the biggest swings surface first.
+ */
+export const yoyBySectorAndSpecies = async (
+  repo: MemoryRepository,
+  plotId: string,
+  year: number
+): Promise<ReadonlyArray<YoyRow>> => {
+  const sectors = await repo.listSectorsByPlot(plotId);
+  const rows: YoyRow[] = [];
+  for (const s of sectors) {
+    const current = await yieldBySectorAndYear(repo, s.id, year);
+    const prior = await yieldBySectorAndYear(repo, s.id, year - 1);
+    const species = new Set<string>();
+    for (const k of current.keys()) {
+      species.add(k);
+    }
+    for (const k of prior.keys()) {
+      species.add(k);
+    }
+    for (const speciesId of species) {
+      const currentGrams = current.get(speciesId) ?? 0;
+      const priorGrams = prior.get(speciesId) ?? 0;
+      const deltaGrams = currentGrams - priorGrams;
+      const deltaPct = priorGrams > 0 ? Math.round((deltaGrams / priorGrams) * 100) : null;
+      rows.push({ sectorId: s.id, speciesId, currentGrams, priorGrams, deltaGrams, deltaPct });
+    }
+  }
+  rows.sort((a, b) => Math.abs(b.deltaGrams) - Math.abs(a.deltaGrams));
+  return rows;
+};
+
 // keep `Harvest` importable from the aggregation barrel for consumers
 export type { Harvest };

@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as SecureStore from "expo-secure-store";
+import { summary } from "@garden/core";
 import { settingsStore } from "@/features/settings";
+import { useAnnounce } from "@/core/announce";
 
 const KEY_NAME = "anthropic_api_key";
 const PREFIX_LEN = 7;
@@ -26,6 +28,7 @@ export type AnthropicKeyState = {
 
 export const useAnthropicKey = (): AnthropicKeyState => {
   const qc = useQueryClient();
+  const announce = useAnnounce();
   const query = useQuery<string | null>({
     queryKey: keyQueryKey,
     queryFn: async () => {
@@ -41,6 +44,10 @@ export const useAnthropicKey = (): AnthropicKeyState => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: keyQueryKey });
+      void announce(summary.success("Anthropic key saved"));
+    },
+    onError: () => {
+      void announce(summary.actionRequired("Could not save key. Check device secure storage."));
     }
   });
 
@@ -51,6 +58,10 @@ export const useAnthropicKey = (): AnthropicKeyState => {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: keyQueryKey });
+      void announce(summary.success("Anthropic key cleared"));
+    },
+    onError: () => {
+      void announce(summary.actionRequired("Could not clear key. Try again."));
     }
   });
 

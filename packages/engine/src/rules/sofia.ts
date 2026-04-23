@@ -19,6 +19,16 @@ const setbackRule: ComplianceRule = {
   id: "sofia.setback.boundary",
   reference: "Sofia Municipality — property line setbacks (advisory summary).",
   check: (data: ScanData): Verdict => {
+    if (data.distanceToPropertyLine === undefined) {
+      return actionRequired(
+        "Pin the property line distance before requesting a compliance verdict.",
+        {
+          sourceRuleId: "sofia.setback.boundary",
+          reference: "Sofia Municipality — property line setbacks (advisory summary).",
+          disclaimer: DISCLAIMER
+        }
+      );
+    }
     if (data.distanceToPropertyLine >= SpatialLimits.MIN_SETBACK_METERS) {
       return null;
     }
@@ -52,6 +62,12 @@ const waterTableRule: ComplianceRule = {
   id: "sofia.water-table.intervention",
   reference: "Sofia basin groundwater hints — advisory.",
   check: (data: ScanData): Verdict => {
+    if (data.waterTableDepth === undefined) {
+      // Silent pass — water-table fallback is out of scope for capture today.
+      // The sibling setback rule already produces an `actionRequired` before
+      // this one fires, so we do not double-up the prompt.
+      return null;
+    }
     if (data.waterTableDepth >= SpatialLimits.SAFE_WATER_TABLE_DEPTH) {
       return null;
     }

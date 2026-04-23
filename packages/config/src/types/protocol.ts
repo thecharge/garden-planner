@@ -1,13 +1,21 @@
 import type { SoilTexture, TaskStatus } from "../enums";
 
-/** The raw numeric scan payload a Protocol carries. */
+/** The raw numeric scan payload a Protocol carries.
+ *
+ * Only `slopeDegree` is REQUIRED — it is the single value the sensor fusion
+ * can always provide from camera + DeviceMotion. Every other field is optional
+ * and sourced from user-confirmed pins (property line, water table) or
+ * supplemental sensors (GPS, barometer, soil samples). The compliance engine
+ * treats missing optional fields as "unknown constraint" and routes to
+ * `summary.actionRequired(...)` rather than silently passing.
+ */
 export type ScanData = {
-  /** Perpendicular distance from the scan point to the nearest property-line polygon edge, metres. */
-  readonly distanceToPropertyLine: number;
   /** Average pitch of the scanned slope across the capture window, degrees. */
   readonly slopeDegree: number;
+  /** Perpendicular distance from the scan point to the nearest property-line polygon edge, metres. */
+  readonly distanceToPropertyLine?: number;
   /** Depth from surface to water table, metres. Higher means drier. */
-  readonly waterTableDepth: number;
+  readonly waterTableDepth?: number;
   /** Compass orientation of the scan, degrees. 0 = north, 90 = east. */
   readonly orientationDegrees?: number;
   /** Elevation above sea level, metres. */
