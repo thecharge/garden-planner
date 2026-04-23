@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { AppState } from "react-native";
+import { AppState, Platform } from "react-native";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import { DeviceMotion } from "expo-sensors";
@@ -16,23 +16,46 @@ export type CapturePermissions = {
   readonly request: () => Promise<void>;
 };
 
-const asGranted = (value: { status?: string; granted?: boolean }): boolean => {
+const asGranted = (value: { status?: string; granted?: boolean } | undefined | null): boolean => {
+  if (!value) {
+    return false;
+  }
   if (typeof value.granted === "boolean") {
     return value.granted;
   }
   return value.status === "granted";
 };
 
+/** DeviceMotion has no Android runtime permission — it's always accessible via
+ * the standard sensor API. On iOS + Web the user prompt is required; we detect
+ * those and call the async getter only there.
+ */
+const readMotionGranted = async (): Promise<boolean> => {
+  if (Platform.OS === "android") {
+    return true;
+  }
+  try {
+    const getter = (DeviceMotion as unknown as { getPermissionsAsync?: () => Promise<{ status?: string; granted?: boolean }> }).getPermissionsAsync;
+    if (!getter) {
+      return true;
+    }
+    const res = await getter();
+    return asGranted(res);
+  } catch {
+    return true;
+  }
+};
+
 const readOnce = async () => {
   const [camera, location, motion] = await Promise.all([
     Camera.getCameraPermissionsAsync(),
     Location.getForegroundPermissionsAsync(),
-    DeviceMotion.getPermissionsAsync()
+    readMotionGranted()
   ]);
   return {
     camera: asGranted(camera),
     location: asGranted(location),
-    motion: asGranted(motion)
+    motion
   };
 };
 
@@ -50,12 +73,30 @@ export const useCapturePermissions = (): CapturePermissions => {
     }
   }, []);
 
+  const requestMotion = useCallback(async (): Promise<void> => {
+    if (Platform.OS === "android") {
+      return;
+    }
+    try {
+      const requester = (
+        DeviceMotion as unknown as {
+          requestPermissionsAsync?: () => Promise<unknown>;
+        }
+      ).requestPermissionsAsync;
+      if (requester) {
+        await requester();
+      }
+    } catch {
+      // no-op
+    }
+  }, []);
+
   const request = useCallback(async () => {
     try {
       await Promise.all([
         Camera.requestCameraPermissionsAsync(),
         Location.requestForegroundPermissionsAsync(),
-        DeviceMotion.requestPermissionsAsync()
+        requestMotion()
       ]);
       await refresh();
     } catch (err) {
@@ -63,7 +104,7 @@ export const useCapturePermissions = (): CapturePermissions => {
         name: err instanceof Error ? err.name : "unknown"
       });
     }
-  }, [refresh]);
+  }, [refresh, requestMotion]);
 
   useEffect(() => {
     void refresh();
