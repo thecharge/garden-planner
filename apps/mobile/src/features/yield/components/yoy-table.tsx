@@ -63,10 +63,18 @@ export const YoyTable = ({ rows, year }: YoyTableProps) => {
   return (
     <Card accessibilityLabel="Year-over-year comparison">
       <View style={{ flexDirection: "row", paddingVertical: 6 }}>
-        <Body style={{ flex: 2 }}>Sector / Species</Body>
-        <Body style={{ flex: 1, textAlign: "right" }}>{year - 1}</Body>
-        <Body style={{ flex: 1, textAlign: "right" }}>{year}</Body>
-        <Body style={{ flex: 1.2, textAlign: "right" }}>Δ</Body>
+        <View style={{ flex: 2 }}>
+          <Body>Sector / Species</Body>
+        </View>
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <Body>{year - 1}</Body>
+        </View>
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <Body>{year}</Body>
+        </View>
+        <View style={{ flex: 1.2, alignItems: "flex-end" }}>
+          <Body>Δ</Body>
+        </View>
       </View>
       {rows.map((row) => {
         const intensity =
@@ -93,13 +101,15 @@ export const YoyTable = ({ rows, year }: YoyTableProps) => {
               <Body>{row.sectorId}</Body>
               <Caption>{row.speciesId}</Caption>
             </View>
-            <Body style={{ flex: 1, textAlign: "right" }}>
-              {row.priorGrams > 0 ? `${row.priorGrams} g` : "—"}
-            </Body>
-            <Body style={{ flex: 1, textAlign: "right" }}>
-              {row.currentGrams > 0 ? `${row.currentGrams} g` : "—"}
-            </Body>
-            <Body style={{ flex: 1.2, textAlign: "right" }}>{formatDelta(row)}</Body>
+            <View style={{ flex: 1, alignItems: "flex-end" }}>
+              <Body>{row.priorGrams > 0 ? `${row.priorGrams} g` : "—"}</Body>
+            </View>
+            <View style={{ flex: 1, alignItems: "flex-end" }}>
+              <Body>{row.currentGrams > 0 ? `${row.currentGrams} g` : "—"}</Body>
+            </View>
+            <View style={{ flex: 1.2, alignItems: "flex-end" }}>
+              <Body>{formatDelta(row)}</Body>
+            </View>
           </View>
         );
       })}

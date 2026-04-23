@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import { Button, ButtonMode } from "@garden/ui";
 import { summary } from "@garden/core";
@@ -67,10 +67,10 @@ export const ExportCsvButton = ({ rows, year }: ExportCsvButtonProps) => {
     <Button
       mode={ButtonMode.Secondary}
       onPress={onPress}
-      loading={busy}
+      disabled={busy}
       accessibilityLabel="Export yield history to CSV"
     >
-      Export yield history
+      {busy ? "Exporting…" : "Export yield history"}
     </Button>
   );
 };

@@ -1,4 +1,4 @@
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import * as Sharing from "expo-sharing";
 import type { YoyRow } from "@garden/engine";
 import { findByAccessibilityLabel, flush, renderWithProviders } from "@/__tests__/test-utils";

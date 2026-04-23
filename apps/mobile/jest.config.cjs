@@ -35,6 +35,7 @@ module.exports = {
     "^expo-sensors$": "<rootDir>/src/__mocks__/expo-sensors.ts",
     "^expo-location$": "<rootDir>/src/__mocks__/expo-location.ts",
     "^expo-file-system$": "<rootDir>/src/__mocks__/expo-file-system.ts",
+    "^expo-file-system/legacy$": "<rootDir>/src/__mocks__/expo-file-system.ts",
     "^expo-sharing$": "<rootDir>/src/__mocks__/expo-sharing.ts",
     "^expo-splash-screen$": "<rootDir>/src/__mocks__/expo-splash-screen.ts",
     "^@expo/vector-icons$": "<rootDir>/src/__mocks__/@expo/vector-icons.tsx"
