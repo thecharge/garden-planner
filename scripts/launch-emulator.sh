@@ -20,7 +20,12 @@ if adb devices 2>/dev/null | grep -qE "emulator-\d+\s+device"; then
 fi
 
 echo "Starting emulator '${AVD_NAME}' in the background…"
-nohup emulator -avd "${AVD_NAME}" -no-snapshot-save -no-boot-anim \
+# -memory / -gpu override config.ini at boot so an old AVD still gets a sane
+# budget. CameraView preview needs host GPU; 3 GB RAM keeps the dev bundle
+# from OOM-killing the app during `pnpm dev`.
+nohup emulator -avd "${AVD_NAME}" \
+  -no-snapshot-save -no-boot-anim \
+  -memory 3072 -gpu host \
   >/tmp/emulator.log 2>&1 &
 
 echo "Waiting for adb to see a device…"

@@ -135,10 +135,13 @@ else
 fi
 
 banner "7/7 Installing + launching the APK on ${DEVICE}"
+# expo run:android's --device takes a device NAME, not an adb serial. We
+# already export ANDROID_SERIAL above, which expo honours for install +
+# launch targeting, so the flag would only cause "device not found".
 (
   cd "${REPO_ROOT}"
   REACT_NATIVE_PACKAGER_HOSTNAME=localhost \
-    pnpm --filter apps-mobile exec expo run:android --no-bundler --device "${DEVICE}"
+    pnpm --filter apps-mobile exec expo run:android --no-bundler
 )
 
 banner "Done. Streaming Metro log (Ctrl+C stops the tail, not Metro)."

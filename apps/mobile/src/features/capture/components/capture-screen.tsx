@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { View } from "react-native";
 import { CameraView } from "expo-camera";
-import { useRouter } from "expo-router";
+import { useIsFocused, useRouter } from "expo-router";
 import {
   Body,
   Button,
@@ -31,8 +31,10 @@ export const CaptureScreen = () => {
   const perms = useCapturePermissions();
   const verdict = useComplianceVerdict();
   const announce = useAnnounce();
+  const isFocused = useIsFocused();
   const [propertyLineMeters, setPropertyLineMeters] = useState<string>("");
   const [scanBusy, setScanBusy] = useState(false);
+  const [viewfinderOpen, setViewfinderOpen] = useState(false);
 
   const onScan = useCallback(async () => {
     if (!perms.allGranted || scanBusy) {
@@ -55,6 +57,7 @@ export const CaptureScreen = () => {
         hasLine: protocol.data.distanceToPropertyLine !== undefined
       });
       verdict.mutate(protocol);
+      setViewfinderOpen(false);
     } catch (err) {
       const message =
         err instanceof SmepError
@@ -93,7 +96,7 @@ export const CaptureScreen = () => {
             backgroundColor: tokens.colors.muted
           }}
         >
-          {perms.camera ? (
+          {perms.camera && viewfinderOpen && isFocused ? (
             <CameraView style={{ flex: 1 }} facing="back" />
           ) : (
             <View
@@ -103,13 +106,29 @@ export const CaptureScreen = () => {
                 justifyContent: "center",
                 borderWidth: 2,
                 borderStyle: "dashed",
-                borderColor: tokens.colors.primary
+                borderColor: tokens.colors.primary,
+                padding: 16
               }}
             >
-              <Body muted>Camera permission not granted</Body>
+              <Body muted>
+                {perms.camera
+                  ? viewfinderOpen
+                    ? "Viewfinder paused (off-screen)"
+                    : "Viewfinder closed to save memory"
+                  : "Camera permission not granted"}
+              </Body>
             </View>
           )}
         </View>
+        {perms.camera ? (
+          <Button
+            mode={ButtonMode.Secondary}
+            onPress={() => setViewfinderOpen((prev) => !prev)}
+            accessibilityLabel={viewfinderOpen ? "Close viewfinder" : "Open viewfinder"}
+          >
+            {viewfinderOpen ? "Close viewfinder" : "Open viewfinder"}
+          </Button>
+        ) : null}
       </Card>
 
       <Card accessibilityLabel="Property-line pin">

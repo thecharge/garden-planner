@@ -28,4 +28,21 @@ echo "no" | avdmanager create avd \
   --package "${SYSTEM_IMAGE}" \
   --device "pixel_6" \
   --force
+
+# AVD defaults are hostile to a dev-mode RN bundle + CameraView preview.
+# Host GPU + 3 GB RAM + 512 MB Dalvik heap are the minimum to keep Capture
+# from OOM-killing during `pnpm dev`. See scripts/launch-emulator.sh for the
+# defensive emulator flags that also apply at boot.
+CONFIG="${HOME}/.android/avd/${AVD_NAME}.avd/config.ini"
+if [ -f "${CONFIG}" ]; then
+  # sed -i: apply key=value overrides, preserving the " = " spacing avdmanager emits
+  sed -i \
+    -e 's|^hw\.gpu\.enabled .*|hw.gpu.enabled = yes|' \
+    -e 's|^hw\.gpu\.mode .*|hw.gpu.mode = host|' \
+    -e 's|^hw\.ramSize .*|hw.ramSize = 3072M|' \
+    -e 's|^vm\.heapSize .*|vm.heapSize = 512M|' \
+    "${CONFIG}"
+  echo "Patched ${CONFIG}: gpu=host, ram=3072M, heap=512M."
+fi
+
 echo "Done. Launch with: ./scripts/launch-emulator.sh"
