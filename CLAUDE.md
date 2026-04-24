@@ -57,8 +57,30 @@ Tests may use narrow local unions for tuple types (lint exempts them) — but pr
 - Cross-modal redundancy: every verdict fires TTS + caption + haptic via `announce()` in `@garden/ui`.
 - Plain-language copy: short sentences, active voice, no unexplained jargon.
 - Never convey state by color alone.
+- Expensive sensors (camera, location stream) must be gated on `useIsFocused()` from `expo-router` so they unmount when the tab blurs. Capture screen is the canonical example — `<CameraView>` also sits behind an explicit opt-in toggle so the app can be opened on the Capture tab without streaming a frame.
 
 See `ACCESSIBILITY.md` for the reviewer sign-off ledger (release is blocked until filled).
+
+### Verifying a UI change on device — mandatory
+
+**No UI change lands without a proof screenshot captured from the running app.** Component tests prove the render tree; they do not prove the screen works on the device. The workflow is:
+
+1. Have a device or emulator attached (`./scripts/launch-emulator.sh` or plug in a phone).
+2. Install the APK (`pnpm dev` for debug + hot reload, `pnpm sideload` for the release APK).
+3. Drive + capture via `scripts/adb-ui.sh` — see the `adb-ui-ops` skill.
+4. Commit the proof PNGs to `docs/screenshots/` alongside the code change and reference them from `docs/STATUS.md`.
+
+**Never** hand-guess pixel coordinates from a scaled screenshot. Use the label-based resolver:
+
+```bash
+scripts/adb-ui.sh tap "Open viewfinder"        # resolves content-desc or text via uiautomator
+scripts/adb-ui.sh tap-tab capture              # deep-links the tab (more reliable than a tab-bar tap)
+scripts/adb-ui.sh shot capture-verdict         # → docs/screenshots/capture-verdict.png
+scripts/adb-ui.sh alive                        # "PID=<n>" — must print this after a stress sequence
+scripts/adb-ui.sh watch 60                     # scoped crash watcher (FATAL / OOM / app-died)
+```
+
+A screenshot under ~30 KB is almost always a black frame: the app crashed or the GPU hadn't rendered. `Read` every proof PNG before you commit it, and always pair it with `alive` to catch an OOM-then-restart that left the PID slot reused.
 
 ## Architecture (pnpm workspaces + Turborepo)
 
@@ -78,7 +100,7 @@ apps/
     src/engine/   spatial store (Zustand transient), pose throttle, capture driver, Reanimated, Skia
     src/features/ capture, sectors, yield, rotation, nutrient, inventory, voice, a11y, overlay, settings
 
-scripts/       setup-env / doctor / create-avd / launch-emulator
+scripts/       setup-env / doctor / create-avd / launch-emulator / dev / sideload / adb-ui
 openspec/      spec-driven design trail — every change lives in openspec/changes/
 ```
 
@@ -102,10 +124,30 @@ pnpm audit:deps                         # pnpm audit, high+ (non-blocking)
 pnpm audit:citations                    # fail if any @garden/engine data entry lacks sourceCitation
 pnpm audit:contrast                     # fail if any @garden/ui theme pair drops below WCAG AA / AAA
 pnpm check:all                          # the lot (the same CI gate)
+```
 
-./scripts/launch-emulator.sh            # boot the default AVD
-pnpm --filter apps-mobile run start     # Metro bundler
-pnpm --filter apps-mobile run android   # build + install the APK on the running emulator
+### Run the app
+
+```bash
+./scripts/launch-emulator.sh            # boot the default Pixel_6_API_35 AVD
+pnpm dev                                # debug build + Metro + tail. Prefers phone > emulator.
+pnpm dev release                        # install the prebuilt release APK, skip Metro
+pnpm dev:stop                           # kill Metro + emulator
+pnpm sideload                           # install the release APK on the first real phone (USB)
+pnpm apk                                # build the release APK (no install)
+```
+
+`pnpm dev` picks a real phone over the emulator when both are attached. The Metro log is at `/tmp/garden-metro.log`; Ctrl+C stops the tail but keeps Metro alive so hot-reload survives between runs. Emulator AVD config is pre-tuned for camera workloads (3 GB RAM, 512 MB heap, `gpu host`) — the launcher passes `-memory 3072 -gpu host` as a backstop for older AVDs.
+
+### Drive the running app
+
+```bash
+scripts/adb-ui.sh grant                 # grant camera + location runtime perms
+scripts/adb-ui.sh tap-tab capture       # switch tabs via deep-link
+scripts/adb-ui.sh tap "Open viewfinder" # tap by content-desc or visible text
+scripts/adb-ui.sh shot capture-verdict  # → docs/screenshots/capture-verdict.png
+scripts/adb-ui.sh alive                 # "PID=<n>" or exit 1
+scripts/adb-ui.sh watch 60              # scoped FATAL / OOM / app-died watcher
 ```
 
 ### OpenSpec
@@ -141,6 +183,7 @@ Run with `pnpm --filter <pkg> run test` or `pnpm test:coverage` for per-package 
 Under `.claude/skills/`:
 
 - `launch-emulator/` — source setup-env, boot AVD, verify adb.
+- `adb-ui-ops/` — drive the running app: tap by label, screenshot for proof, deep-link tabs, grant perms, watch for crashes. Required reading before verifying any UI change.
 - `run-tests-with-coverage/` — run coverage, open the HTML report path.
 - `build-apk/` — local prebuild + gradle APK build.
 - `check-conventions/` — single pre-PR gate (unions, lint, cspell, citations, contrast).
@@ -161,3 +204,6 @@ Plus OpenSpec workflow skills (`openspec-propose`, `openspec-apply-change`, `ope
 - Introduce a magic number or user-facing string literal in feature code. Put it in `core/config.ts` or `locales/en.ts`.
 - Merge a PR that drops a theme token's contrast below its threshold.
 - Commit a font file without listing its OFL source in `apps/mobile/assets/fonts/LICENSES.md`.
+- Hand-guess tap coordinates from a screenshot. Use `scripts/adb-ui.sh tap "<label>"` or `tap-tab <name>`.
+- Claim a UI change is done without a proof screenshot in `docs/screenshots/` and an `alive` check. Rendered ≠ survives; a black 23 KB PNG is a crash, not a build.
+- Mount `<CameraView>` (or any other heavy sensor surface) without `useIsFocused()` gating. The emulator's OOM killer will find you.

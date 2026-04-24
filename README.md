@@ -12,10 +12,26 @@ A local-first, accessibility-first garden planner for home growers and small far
 
 ```bash
 pnpm install
-pnpm dev
+pnpm dev                 # picks phone > emulator, builds debug APK, tails Metro
+pnpm dev release         # install the prebuilt release APK — no Metro
+pnpm sideload            # install the release APK on a plugged-in phone
+pnpm dev:stop            # kill Metro + emulator
 ```
 
-`pnpm dev` sources env, runs `doctor.sh`, boots the Pixel AVD if not already running, starts Metro in the background, installs the APK on the device, and tails the Metro log. Ctrl+C stops only the tail — Metro keeps running. Teardown with `pnpm dev:stop`.
+`pnpm dev` sources env, runs `doctor.sh`, boots the Pixel AVD if no device is attached, forces the Metro URL to `localhost:8081` over `adb reverse`, installs the debug APK, and tails the Metro log. Ctrl+C stops only the tail — Metro keeps running.
+
+### Drive and verify the running app
+
+```bash
+scripts/adb-ui.sh grant                 # grant camera + location runtime perms
+scripts/adb-ui.sh tap-tab capture       # deep-link to a tab
+scripts/adb-ui.sh tap "Open viewfinder" # tap by accessibility label / visible text
+scripts/adb-ui.sh shot capture-verdict  # → docs/screenshots/capture-verdict.png
+scripts/adb-ui.sh alive                 # PID=<n> or exit 1
+scripts/adb-ui.sh watch 60              # scoped FATAL / OOM / app-died watcher
+```
+
+The label resolver parses `uiautomator` dumps, so it never misses a button. Tab switching uses `gardenplanner://` deep-links — more reliable than hitting a 154-px tab target. Every UI change must land with a proof PNG under `docs/screenshots/` plus a post-sequence `alive` — a screenshot can look fine while the process has just been OOM-killed.
 
 Everything else is one layer below:
 
@@ -35,11 +51,11 @@ A standard SaaS garden planner lets you drag cartoon trees over a 2D grid and as
 
 Each bullet below is tagged: ✅ works today, 🟡 partial, 🔴 designed but not yet implemented. See [STATUS.md](docs/STATUS.md) for evidence.
 
-- 🔴 **Spatial capture** — the vision is "pan the camera, get a `Protocol`". Today the Viewfinder is a placeholder `<View>` and **Scan** fabricates a hardcoded Protocol. Real capture lands in `make-capture-voice-yoy-real`. Do not rely on capture numbers.
-- ✅ **Compliance engine** — Sofia-basin setback / slope / water-table rules; every verdict cites its source. Pure-engine, tested. Runs against whatever Protocol is fed in, including the current mock.
+- ✅ **Spatial capture** — opt-in live `<CameraView>`, 2-second DeviceMotion window fuses pitch + heading into a real `Protocol`. No property-line distance pin means the compliance engine routes to `actionRequired` honestly instead of fabricating a verdict. Viewfinder is focus-gated and auto-closes after a scan so the app opens without streaming a frame. See `docs/screenshots/capture-opt-in.png`.
+- ✅ **Compliance engine** — Sofia-basin setback / slope / water-table rules; every verdict cites its source. Pure-engine, tested. Every scan feeds a real Protocol now, not a mock.
 - ✅ **Rotation + irrigation advisor** — science-backed (crop families, FAO-56 Penman-Monteith ET₀, Kc stage curves). 🟡 Liebig amendment UI is still a stub.
-- 🔴 **Voice** — the vision is "earbuds in, phone in pocket, captions for every spoken word". Today nothing is wired: no TTS, no STT, no haptics. `announce()` exists in `@garden/ui`; the device channels are not connected. Tracked in the same change.
-- ✅ **Accessibility tokens** — neutral pastel + dark + AAA high-contrast; Lexend default / OpenDyslexic opt-in; contrast audited in CI. **The cross-modal contract is defined but not fired** (see voice row).
+- ✅ **Voice output** — `announce()` fires TTS (`expo-speech`) + caption bar (Zustand store mounted in the root gate) + haptic (`expo-haptics`) on every mutation. Each channel is gated by an independent Settings toggle. 🔴 **STT input is not wired** — Scan is tap-driven today; Vosk/whisper.cpp integration lives in `make-voice-stt-real`.
+- ✅ **Accessibility tokens** — neutral pastel + dark + AAA high-contrast; Lexend default / OpenDyslexic opt-in; contrast audited in CI. Cross-modal contract is fired for every mutation hook.
 - 🟡 **Local-first, BYOK** — today the notebook is an **in-memory `Map`** (lost on reinstall); SQLite adapter tracked in `make-device-sqlite-adapter`. Anthropic key _is_ persisted in `expo-secure-store` (paste + mask + clear all shipped).
 
 ## User flows that actually work today
@@ -171,11 +187,24 @@ apps/mobile/src/
 
 A feature silo is deletable (minus its route) without breaking the rest of the app. Cross-feature imports only through the feature's `index.ts`.
 
-**State:** TanStack Query for everything through `MemoryRepository` and the reasoning provider; Zustand for client UI state; a Zustand **transient** store for the spatial pose. ⚠️ The "Reanimated worklets and Skia canvas read from the transient store directly" line describes the target architecture; neither dir is implemented in `apps/mobile/src/engine/` today (see [STATUS.md](docs/STATUS.md) row 10).
+**State:** TanStack Query for everything through `MemoryRepository` and the reasoning provider; Zustand for client UI state; a Zustand **transient** store for the spatial pose. ⚠️ The capture driver populates the spatial store's pose-throttle output already; the Reanimated worklet and Skia canvas that consume it are not wired yet (see [STATUS.md](docs/STATUS.md) row 10).
 
 **Theme live-switch:** the root `_layout.tsx` wraps the app in `SettingsThemeProvider` (in `apps/mobile/src/core/theme/`). The wrapper subscribes to `settingsStore.themeId` via `zustand`'s `useStore` and passes the active id into `@garden/ui`'s `ThemeProvider`. Flipping the theme in Settings re-renders every mounted screen without a restart. `@garden/ui` stays decoupled from the mobile settings store.
 
-**Accessibility contract:** every verdict is _designed_ to produce TTS + caption + haptic via `announce(summary)` in `@garden/ui`. ⚠️ The design is complete; the device channels (expo-speech / expo-haptics / caption store) are being wired in `make-capture-voice-yoy-real`. Until then, no verdict is audible.
+**Accessibility contract:** every verdict produces TTS + caption + haptic via `announce(summary)` in `@garden/ui`. The provider is mounted in the root gate; `useAnnounce()` is the feature-side hook. Each channel has an independent Settings toggle (voice / captions / haptics) and all three are persisted.
+
+## Honest next steps
+
+In priority order, with OpenSpec change IDs where a design already exists:
+
+1. **`make-voice-stt-real`** — Vosk/whisper.cpp into `useVoiceLoop`. Removes the last tap-only dependency from the capture flow.
+2. **`make-device-sqlite-adapter`** — `expo-sqlite` behind `SqliteLike` with numbered migrations. Closes the "data resets on reinstall" gap.
+3. **`make-spatial-overlay-real`** — ship `apps/mobile/src/engine/skia/` + `engine/reanimated/` to consume the pose-throttle output the capture driver already populates. Finally paints the green/red compliance boundary on the viewfinder.
+4. **Liebig amendment UI** — irrigation card is live; the amendment/demand diff card is a stub. Engine-side math exists.
+5. **Native BG translations** — strings mirror EN with `// TODO(bg)` markers. Needs a named reviewer in `ACCESSIBILITY.md`.
+6. **Agronomist sign-off** on `packages/engine/src/data/species.ts` + `nutrient/species-demand.ts` — science is cited per row; still not peer-reviewed.
+
+`docs/STATUS.md` is the ground truth row-by-row with `file:line` evidence. Read it before trusting anything here.
 
 ## License
 

@@ -184,7 +184,11 @@
     "colours",
     "Paper-wrapped",
     "whisper.cpp",
-    "fallbacks"
+    "fallbacks",
+    "uiautomator",
+    "screenshotting",
+    "lowmemorykiller",
+    "Dalvik"
   ],
   "flagWords": []
 }

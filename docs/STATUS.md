@@ -1,6 +1,6 @@
 # STATUS — what actually works, what doesn't
 
-**Last reality-check: 2026-04-23.** This file is the ground truth. The README is
+**Last reality-check: 2026-04-24.** This file is the ground truth. The README is
 marketing-adjacent; this file is what shipped. If the two disagree, the README
 is wrong and this file wins.
 
@@ -32,6 +32,7 @@ Every row has a `file:line` pointer so you can verify.
 | 13  | Splash / loading                                                                     | ✅ Works       | `apps/mobile/src/core/root-gate.tsx:12` calls `SplashScreen.preventAutoHideAsync()` at module load; `useAppReady` flips to true on first tick (2-second hard timeout). `SplashScreen.hideAsync()` fires in a `useEffect` once ready. No more "constantly loading".                                                                                                                                                                                                                                                                                                                                                                                                               |
 | 14  | STT (speech-to-text)                                                                 | 🔴 Placeholder | The `useVoiceLoop` scaffold accepts a `{ transcript, sttConfidence }` but nothing feeds it. Vosk / whisper.cpp integration is tracked in `make-voice-stt-real`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 15  | Permissions rationale screen                                                         | ✅ Works       | `apps/mobile/app/capture/permissions.tsx` + `apps/mobile/src/features/capture/components/permissions-screen.tsx` — three rows (Camera / Location / Motion) + Grant button. `use-capture-permissions.ts` re-polls on `AppState` change. Capture's Scan button is gated behind `allGranted` with an `actionRequired` caption meanwhile.                                                                                                                                                                                                                                                                                                                                            |
+| 16  | Capture stability — no OOM on the emulator                                           | ✅ Works       | **Verified on emulator-5554 2026-04-24**: 20 s viewfinder open → PID unchanged (3364), tab round-trip Capture→Sectors→Capture → clean remount, Scan → verdict rendered, zero `FATAL` / `lowmemorykiller-kill` events in a scoped logcat watch. Fix in commit `41ae52c`: (a) `apps/mobile/src/features/capture/components/capture-screen.tsx` — `<CameraView>` mounts only when `perms.camera && viewfinderOpen && isFocused` and auto-closes after a scan; (b) AVD config bumped to 3 GB RAM / 512 MB Dalvik heap / `gpu host` via `scripts/create-avd.sh` + emulator boot flags in `scripts/launch-emulator.sh`. Proof: `docs/screenshots/capture-opt-in.png`.                |
 
 ## "What actually works today" for a user who sideloads the APK
 
@@ -42,7 +43,7 @@ Every row has a `file:line` pointer so you can verify.
 5. **Rotation tab** — per-sector species recommendation with reason-code and citation.
 6. **Nutrient tab** — weekly irrigation target (mm) from FAO-56 Penman-Monteith.
 7. **Settings** — paste the Anthropic key, flip theme, body font, and the three output channels (voice / captions / haptics) independently.
-8. **Capture tab** — permissions rationale → live `<CameraView>` → 2-second DeviceMotion sample window → `Protocol` → compliance verdict → announced via TTS + caption + haptic. Requires the user to pin the property-line distance before a setback verdict is possible (honest: we don't fake it).
+8. **Capture tab** — viewfinder starts closed to save memory. Tap **Open viewfinder** to mount `<CameraView>`; `useIsFocused` unmounts it when the tab blurs. Scan triggers a 2-second DeviceMotion sample window → `Protocol` → compliance verdict → announced via TTS + caption + haptic. Viewfinder auto-closes after a scan. Pin a property-line distance first to get a setback verdict; otherwise the engine routes to `actionRequired` honestly.
 
 Every row in this list is exercised by a Jest test under the matching package.
 
@@ -55,6 +56,8 @@ Every row in this list is exercised by a Jest test under the matching package.
 5. **Real BG translations.** Strings mirror EN with TODO markers.
 
 ## How to verify the reality yourself
+
+### Static: grep the source
 
 ```bash
 # expo-camera IS imported now
@@ -71,6 +74,25 @@ grep -n "yoyBySectorAndSpecies\|priorGrams\|currentGrams" apps/mobile/src/featur
 
 # Caption bar is mounted at the root layout
 grep -n "CaptionBar" apps/mobile/src/core/root-gate.tsx
+
+# Capture viewfinder is focus-gated + opt-in
+grep -n "useIsFocused\|viewfinderOpen" apps/mobile/src/features/capture/components/capture-screen.tsx
+```
+
+### Dynamic: drive the app
+
+```bash
+. ./scripts/setup-env.sh && ./scripts/launch-emulator.sh
+pnpm dev                                 # build + install + tail Metro
+scripts/adb-ui.sh grant
+scripts/adb-ui.sh tap-tab capture
+scripts/adb-ui.sh shot capture-default   # proof: viewfinder closed
+scripts/adb-ui.sh tap "Open viewfinder"
+scripts/adb-ui.sh shot capture-opt-in    # proof: viewfinder streaming
+scripts/adb-ui.sh tap "Scan"
+sleep 4
+scripts/adb-ui.sh shot capture-verdict   # proof: verdict rendered
+scripts/adb-ui.sh alive                  # must print PID=<n>
 ```
 
 ## What we are tracking next (OpenSpec changes)
