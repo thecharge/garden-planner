@@ -114,10 +114,14 @@ export const captureProtocol = async (
     confidence,
     data: {
       slopeDegree,
-      distanceToPropertyLine: opts.propertyLineDistanceMeters,
-      waterTableDepth: opts.waterTableDepthMeters,
-      orientationDegrees,
-      elevationMeters
+      ...(opts.propertyLineDistanceMeters !== undefined
+        ? { distanceToPropertyLine: opts.propertyLineDistanceMeters }
+        : {}),
+      ...(opts.waterTableDepthMeters !== undefined
+        ? { waterTableDepth: opts.waterTableDepthMeters }
+        : {}),
+      ...(orientationDegrees !== undefined ? { orientationDegrees } : {}),
+      ...(elevationMeters !== undefined ? { elevationMeters } : {})
     }
   });
 };
@@ -136,7 +140,10 @@ export const expoMotionAdapter: MotionAdapter = {
       const beta = data.rotation?.beta;
       const alpha = data.rotation?.alpha;
       if (typeof beta === "number") {
-        onSample({ pitchRad: beta, headingRad: typeof alpha === "number" ? alpha : undefined });
+        onSample({
+          pitchRad: beta,
+          ...(typeof alpha === "number" ? { headingRad: alpha } : {})
+        });
       }
     });
     return () => subscription.remove();
@@ -151,8 +158,9 @@ export const expoLocationAdapter: LocationAdapter = {
         return {
           latitude: last.coords.latitude,
           longitude: last.coords.longitude,
-          altitudeMeters:
-            typeof last.coords.altitude === "number" ? last.coords.altitude : undefined
+          ...(typeof last.coords.altitude === "number"
+            ? { altitudeMeters: last.coords.altitude }
+            : {})
         };
       }
       const current = await Promise.race<Awaited<
@@ -167,8 +175,9 @@ export const expoLocationAdapter: LocationAdapter = {
       return {
         latitude: current.coords.latitude,
         longitude: current.coords.longitude,
-        altitudeMeters:
-          typeof current.coords.altitude === "number" ? current.coords.altitude : undefined
+        ...(typeof current.coords.altitude === "number"
+          ? { altitudeMeters: current.coords.altitude }
+          : {})
       };
     } catch {
       return null;

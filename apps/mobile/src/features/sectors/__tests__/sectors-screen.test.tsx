@@ -1,6 +1,11 @@
 import { createElement } from "react";
 import { act } from "react-test-renderer";
-import { findByAccessibilityLabel, flush, renderWithProviders } from "@/__tests__/test-utils";
+import {
+  findByAccessibilityLabel,
+  findTextContents,
+  flush,
+  renderWithProviders
+} from "@/__tests__/test-utils";
 import { SectorsScreen } from "@/features/sectors/components/sectors-screen";
 import { __resetMemoryRepositoryForTests, getMemoryRepository } from "@/core/query/repository";
 import { router } from "expo-router";
@@ -18,7 +23,7 @@ describe("SectorsScreen", () => {
       findByAccessibilityLabel(tree, "Add sector").props.onPress();
     });
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("Name cannot be empty");
   });
 

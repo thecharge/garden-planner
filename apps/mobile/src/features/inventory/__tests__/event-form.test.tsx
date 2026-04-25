@@ -1,6 +1,11 @@
 import { createElement } from "react";
 import { act } from "react-test-renderer";
-import { findByAccessibilityLabel, flush, renderWithProviders } from "@/__tests__/test-utils";
+import {
+  findByAccessibilityLabel,
+  findTextContents,
+  flush,
+  renderWithProviders
+} from "@/__tests__/test-utils";
 import { EventForm } from "@/features/inventory/components/event-form";
 import { getMemoryRepository, __resetMemoryRepositoryForTests } from "@/core/query/repository";
 import { EventKind } from "@garden/config";
@@ -29,7 +34,7 @@ describe("EventForm", () => {
   it("prompts user to add a sector when none exist", async () => {
     const tree = renderWithProviders(createElement(EventForm));
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts.join(" ")).toContain("Add a sector first");
   });
 
@@ -42,7 +47,7 @@ describe("EventForm", () => {
       submit.props.onPress();
     });
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("Pick a sector");
   });
 

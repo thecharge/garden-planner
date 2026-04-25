@@ -9,5 +9,10 @@ export type SettingsThemeProviderProps = {
 
 export const SettingsThemeProvider = ({ children }: SettingsThemeProviderProps) => {
   const themeId = useStore(settingsStore, (s) => s.themeId);
-  return <ThemeProvider themeId={themeId}>{children}</ThemeProvider>;
+  const fontFamily = useStore(settingsStore, (s) => s.fontFamily);
+  return (
+    <ThemeProvider themeId={themeId} fontFamilyOverride={fontFamily}>
+      {children}
+    </ThemeProvider>
+  );
 };

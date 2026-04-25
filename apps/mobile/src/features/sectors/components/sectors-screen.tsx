@@ -101,8 +101,23 @@ export const SectorsScreen = () => {
         <Card>
           <Body>No sectors yet.</Body>
           <Body muted>Add your first sector above. A sector is a bed, row, or zone.</Body>
+          <Button
+            mode={ButtonMode.Secondary}
+            onPress={() => router.push("/(tabs)/capture")}
+            accessibilityLabel="Scan a new sector with the camera"
+          >
+            Scan a new sector
+          </Button>
         </Card>
       ) : null}
+
+      <Button
+        mode={ButtonMode.Secondary}
+        onPress={() => router.push("/(tabs)/capture")}
+        accessibilityLabel="Scan a new sector with the camera"
+      >
+        Scan new sector
+      </Button>
     </Screen>
   );
 };

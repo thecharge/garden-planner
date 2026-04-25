@@ -1,6 +1,11 @@
 import { createElement } from "react";
 import { act } from "react-test-renderer";
-import { findByAccessibilityLabel, flush, renderWithProviders } from "@/__tests__/test-utils";
+import {
+  findByAccessibilityLabel,
+  findTextContents,
+  flush,
+  renderWithProviders
+} from "@/__tests__/test-utils";
 import { AnthropicKeyField } from "@/features/settings/components/anthropic-key-field";
 import { settingsStore } from "@/features/settings";
 import * as SecureStore from "expo-secure-store";
@@ -27,7 +32,7 @@ describe("AnthropicKeyField", () => {
       findByAccessibilityLabel(tree, "Save Anthropic key").props.onPress();
     });
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("Paste a key first");
     expect(settingsStore.getState().anthropicKeyConfigured).toBe(false);
   });
@@ -47,7 +52,7 @@ describe("AnthropicKeyField", () => {
 
     expect(settingsStore.getState().anthropicKeyConfigured).toBe(true);
     expect(await SecureStore.getItemAsync("anthropic_api_key")).toBe("sk-ant-abc123defGHIJ4567");
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts.some((t) => t.includes("***…***4567"))).toBe(true);
   });
 

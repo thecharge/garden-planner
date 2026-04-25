@@ -1,10 +1,25 @@
 # Garden Planner
 
-A local-first, accessibility-first garden planner for home growers and small farmers in **Chepinci (Sofia basin, Bulgaria)**. Side-loaded as an Android `.apk`.
+Garden Planner is an Android app for small home growers and farmers: photograph your plot, keep a harvest log, and get science-backed rotation and watering advice — all without internet or subscriptions. Built for growers in Chepinci (Sofia basin, Bulgaria) but usable anywhere.
 
-> **Reality check first.** This README describes the vision _and_ what actually ships. Read **[docs/STATUS.md](docs/STATUS.md)** before you trust a claim on this page — it's the ground truth with `file:line` evidence. If the two disagree, STATUS wins.
+<!-- TODO: add 30-second demo video -->
+
+## What can I do today?
+
+- ✅ **Photograph your plot** — point the camera at a garden bed to capture its slope and orientation. The app turns that scan into a planting record.
+- ✅ **Create sectors from a scan** — after scanning, tap "Create sector from this scan" to save the bed with its measured data attached.
+- ✅ **Log a harvest** — open a sector, tap "Log harvest", enter the weight. The app keeps a running history per bed and per crop.
+- ✅ **See year-over-year yield** — the Yield tab shows a two-column comparison of this year vs last year, with a CSV export you can share.
+- ✅ **Get a rotation recommendation** — the Rotation tab tells you which crop family to plant next in each bed and why, citing agronomic sources.
+- ✅ **Check your irrigation target** — the Nutrient tab calculates a weekly watering target in millimetres using the FAO-56 formula.
+- ✅ **Hear verdicts spoken aloud** — every action is announced via text-to-speech, a caption bar, and a haptic vibration. All three channels can be turned on or off in Settings.
+- ✅ **Control permissions and sound in Settings** — the Settings screen shows camera and location permission status and lets you grant them from one place. Sound is off by default; turn it on whenever you are ready.
+
+---
+
+> **Reality check.** This README describes what actually ships. Read **[docs/STATUS.md](docs/STATUS.md)** before trusting any claim — it is the ground truth with `file:line` evidence. If the two disagree, STATUS wins.
 >
-> Shipped today (tested, reproducible on emulator): sectors CRUD, harvest log, **real two-column year-over-year yield table with CSV export**, inventory records + events, rotation advisor, FAO-56 irrigation target, Anthropic BYOK paste-and-save, theme live-switch, **real camera capture (expo-camera + DeviceMotion + Location) gated behind a permissions rationale screen**, **voice output (TTS + haptics + persistent caption bar) fired on every mutation**, splash-screen handshake.
+> Shipped today (tested, reproducible on emulator): sectors CRUD, harvest log, **real two-column year-over-year yield table with CSV export**, inventory records + events, rotation advisor, FAO-56 irrigation target, Anthropic BYOK paste-and-save, theme live-switch, **real camera capture (expo-camera + DeviceMotion + Location) gated behind a permissions rationale screen**, **voice output (TTS + haptics + persistent caption bar) fired on every mutation**, splash-screen handshake, **home dashboard**, **capture-to-sector flow**, **sound opt-in**, **permissions card in Settings**.
 >
 > Designed but **not yet wired** (tracked in OpenSpec changes): STT voice input (`make-voice-stt-real`), Skia/Reanimated overlays (`make-spatial-overlay-real`), SQLite persistence (`make-device-sqlite-adapter`), native BG translations (reviewer sign-off).
 

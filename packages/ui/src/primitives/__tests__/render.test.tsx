@@ -8,7 +8,7 @@
 import { createElement } from "react";
 import type { ReactElement, ReactNode } from "react";
 import TestRenderer, { act } from "react-test-renderer";
-import { SummaryType, ThemeId } from "@garden/config";
+import { FontFamily, SummaryType, ThemeId } from "@garden/config";
 import { themes } from "../../theme/tokens";
 import { Body } from "../body";
 import { Button, ButtonMode } from "../button";
@@ -38,7 +38,6 @@ describe("Heading", () => {
     const text = root.findByType("Text");
     expect(text.props.accessibilityRole).toBe("header");
     expect(text.props.style.fontSize).toBe(28);
-    expect(text.props.style.fontWeight).toBe("700");
     expect(text.props.style.color).toBe(themes[ThemeId.LightPastel].colors.onSurface);
     expect(text.children).toContain("Title");
   });
@@ -295,5 +294,33 @@ describe("ThemeProvider hooks", () => {
     const probe = tree.root.findByType("probe");
     expect(probe.props["data-id"]).toBe(id);
     expect(probe.props["data-primary"]).toBe(themes[id].colors.primary);
+  });
+});
+
+describe("ThemeProvider fontFamilyOverride", () => {
+  const FontProbe = () => {
+    const tokens = useThemeTokens();
+    return createElement("probe", { "data-font": tokens.typography.bodyFontFamily });
+  };
+
+  it("defaults to Lexend when no override is provided", () => {
+    const tree = render(withTheme(ThemeId.LightPastel, createElement(FontProbe)));
+    const probe = tree.root.findByType("probe");
+    expect(probe.props["data-font"]).toBe(FontFamily.Lexend);
+  });
+
+  it("overrides bodyFontFamily when fontFamilyOverride is provided", () => {
+    let tree!: TestRenderer.ReactTestRenderer;
+    act(() => {
+      tree = TestRenderer.create(
+        createElement(
+          ThemeProvider,
+          { themeId: ThemeId.LightPastel, fontFamilyOverride: FontFamily.OpenDyslexic },
+          createElement(FontProbe)
+        )
+      );
+    });
+    const probe = tree.root.findByType("probe");
+    expect(probe.props["data-font"]).toBe(FontFamily.OpenDyslexic);
   });
 });

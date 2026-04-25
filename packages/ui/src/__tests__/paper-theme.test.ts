@@ -16,4 +16,11 @@ describe("toPaperTheme", () => {
     expect(mapped.fonts.bodyMedium?.fontFamily).toBe(tokens.typography.bodyFontFamily);
     expect(mapped.fonts.bodyMedium?.fontSize).toBe(tokens.typography.bodyFontSizeSp);
   });
+
+  it("letterSpacing is em × fontSize, not the raw em value", () => {
+    const mapped = toPaperTheme(lightPastel);
+    const expected = lightPastel.typography.letterSpacingEm * lightPastel.typography.bodyFontSizeSp;
+    expect(mapped.fonts.bodyMedium?.letterSpacing).toBe(expected);
+    expect(mapped.fonts.bodyMedium?.letterSpacing).not.toBe(lightPastel.typography.letterSpacingEm);
+  });
 });

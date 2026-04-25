@@ -28,6 +28,7 @@
     "doctor": "bash scripts/doctor.sh",
     "sideload": "bash scripts/sideload.sh",
     "apk": "pnpm --filter apps-mobile run apk:local",
+    "apk:prod": "pnpm --filter apps-mobile run apk:prod",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

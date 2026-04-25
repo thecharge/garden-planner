@@ -1,6 +1,11 @@
 import { createElement } from "react";
 import { act } from "react-test-renderer";
-import { findByAccessibilityLabel, flush, renderWithProviders } from "@/__tests__/test-utils";
+import {
+  findByAccessibilityLabel,
+  findTextContents,
+  flush,
+  renderWithProviders
+} from "@/__tests__/test-utils";
 import { SectorDetailScreen } from "@/features/sectors/components/sector-detail-screen";
 import { __resetMemoryRepositoryForTests, getMemoryRepository } from "@/core/query/repository";
 
@@ -29,14 +34,14 @@ describe("SectorDetailScreen", () => {
     await seedSector("s-1", "North bed");
     const tree = renderWithProviders(createElement(SectorDetailScreen, { id: "s-1" }));
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("North bed");
   });
 
   it("shows not-found when the id is missing", async () => {
     const tree = renderWithProviders(createElement(SectorDetailScreen, { id: "missing" }));
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("Sector not found");
   });
 

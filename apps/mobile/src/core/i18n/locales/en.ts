@@ -49,6 +49,23 @@ export const en = {
     rationale:
       "We scan your plot with the camera, listen for your intent with the microphone, and use location to compute setbacks and climate fallbacks. Nothing leaves the phone without your consent.",
     grant: "Grant permissions"
+  },
+  home: {
+    title: "Garden Planner",
+    tagline: "Your plot at a glance.",
+    tapToScan: "Tap to scan",
+    scanHint: "Point the camera at the ground and tap Scan to analyse your plot.",
+    sectorCountOne: "{{count}} sector on this plot",
+    sectorCountOther: "{{count}} sectors on this plot",
+    noSectors: "No sectors yet",
+    noSectorsHint: "Add your first sector on the Sectors tab, or scan a new one.",
+    viewSectors: "View sectors",
+    slopeLabel: "last slope",
+    sectorsLabel: "sectors",
+    capture: "Capture",
+    yield: "Yield",
+    settings: "Settings",
+    loading: "Loading sectors…"
   }
 } as const;
 

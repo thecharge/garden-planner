@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import type { ReactNode } from "react";
 import { ThemeId } from "@garden/config";
+import type { FontFamily } from "@garden/config";
 import { themes } from "../theme/tokens";
 import type { ThemeTokens } from "../theme/tokens";
 
@@ -13,6 +14,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export type ThemeProviderProps = {
   readonly themeId?: ThemeId;
+  readonly fontFamilyOverride?: FontFamily;
   readonly children: ReactNode;
 };
 
@@ -20,8 +22,21 @@ export type ThemeProviderProps = {
  * the tree in `react-native-paper`'s Provider — our primitives use raw RN
  * components styled with tokens directly, so the whole tree is predictable.
  */
-export const ThemeProvider = ({ themeId = ThemeId.LightPastel, children }: ThemeProviderProps) => {
-  const tokens = themes[themeId];
+export const ThemeProvider = ({
+  themeId = ThemeId.LightPastel,
+  fontFamilyOverride,
+  children
+}: ThemeProviderProps) => {
+  const baseTokens = themes[themeId];
+  const tokens = useMemo((): ThemeTokens => {
+    if (!fontFamilyOverride) {
+      return baseTokens;
+    }
+    return {
+      ...baseTokens,
+      typography: { ...baseTokens.typography, bodyFontFamily: fontFamilyOverride }
+    };
+  }, [baseTokens, fontFamilyOverride]);
   const value = useMemo(() => ({ tokens, themeId }), [tokens, themeId]);
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };

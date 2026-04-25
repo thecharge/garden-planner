@@ -14,7 +14,7 @@ const collectKeys = (obj: unknown, prefix = ""): ReadonlyArray<string> => {
 
 describe("locale files", () => {
   it("BG mirrors every EN key exactly", () => {
-    expect(collectKeys(bg).sort()).toEqual(collectKeys(en).sort());
+    expect([...collectKeys(bg)].sort()).toEqual([...collectKeys(en)].sort());
   });
 
   it("BG values default to the EN value (no machine-translated stubs)", () => {

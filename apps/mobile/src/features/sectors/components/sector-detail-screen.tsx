@@ -23,6 +23,32 @@ const PLOT_ID = "plot-a";
 const speciesName = (id: string): string =>
   speciesCatalogue.find((s) => s.id === id)?.commonName ?? id;
 
+const compassLabel = (deg: number): string => {
+  const normalized = ((deg % 360) + 360) % 360;
+  if (normalized < 22.5 || normalized >= 337.5) {
+    return "N";
+  }
+  if (normalized < 67.5) {
+    return "NE";
+  }
+  if (normalized < 112.5) {
+    return "E";
+  }
+  if (normalized < 157.5) {
+    return "SE";
+  }
+  if (normalized < 202.5) {
+    return "S";
+  }
+  if (normalized < 247.5) {
+    return "SW";
+  }
+  if (normalized < 292.5) {
+    return "W";
+  }
+  return "NW";
+};
+
 export type SectorDetailScreenProps = {
   readonly id: string;
 };
@@ -88,6 +114,20 @@ export const SectorDetailScreen = ({ id }: SectorDetailScreenProps) => {
       </Button>
       <Heading>{current.name}</Heading>
       <Body muted>{`Plot ${current.plotId} · ${current.polygon.length.toString()} corners`}</Body>
+
+      {current.slopeDegree !== undefined || current.orientationDegrees !== undefined ? (
+        <Card accessibilityLabel="Scan metadata">
+          {current.slopeDegree !== undefined ? (
+            <ListItem title="Slope" description={`${current.slopeDegree.toFixed(1)}°`} />
+          ) : null}
+          {current.orientationDegrees !== undefined ? (
+            <ListItem
+              title="Orientation"
+              description={`${current.orientationDegrees.toFixed(0)}° (${compassLabel(current.orientationDegrees)})`}
+            />
+          ) : null}
+        </Card>
+      ) : null}
 
       <Card accessibilityLabel="Rename sector">
         <Body>Rename this sector.</Body>

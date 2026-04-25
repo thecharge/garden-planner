@@ -10,6 +10,7 @@ export type GardenButtonProps = {
   readonly onPress: () => void;
   readonly mode?: ButtonMode;
   readonly disabled?: boolean;
+  readonly loading?: boolean;
   readonly accessibilityLabel?: string;
 };
 
@@ -18,6 +19,7 @@ export const Button = ({
   onPress,
   mode = ButtonMode.Primary,
   disabled = false,
+  loading = false,
   accessibilityLabel
 }: GardenButtonProps) => {
   const tokens = useThemeTokens();
@@ -25,15 +27,16 @@ export const Button = ({
   const bg = isPrimary ? tokens.colors.primary : "transparent";
   const fg = isPrimary ? tokens.colors.onPrimary : tokens.colors.primary;
   const borderColor = tokens.colors.primary;
+  const isDisabled = disabled || loading;
 
   return (
     <Pressable
       onPress={onPress}
-      disabled={disabled}
+      disabled={isDisabled}
       accessibilityRole="button"
       {...(accessibilityLabel ? { accessibilityLabel } : {})}
       style={({ pressed }) => ({
-        opacity: disabled ? 0.5 : pressed ? 0.8 : 1,
+        opacity: isDisabled ? 0.5 : pressed ? 0.8 : 1,
         alignSelf: "stretch"
       })}
     >
@@ -50,11 +53,12 @@ export const Button = ({
         }}
       >
         <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
           style={{
             color: fg,
             fontFamily: tokens.typography.bodyFontFamily,
-            fontSize: tokens.typography.bodyFontSizeSp,
-            fontWeight: "600"
+            fontSize: tokens.typography.bodyFontSizeSp
           }}
         >
           {children}

@@ -3,6 +3,7 @@ import { FontFamily, ThemeId } from "@garden/config";
 import { Body, Button, ButtonMode, Card, Heading, ListItem, Screen } from "@garden/ui";
 import { CaptionsMode, settingsStore } from "@/features/settings";
 import { AnthropicKeyField } from "@/features/settings/components/anthropic-key-field";
+import { PermissionsCard } from "@/features/settings/components/permissions-card";
 
 const themeLabel = (id: ThemeId): string => {
   if (id === ThemeId.LightPastel) {
@@ -29,11 +30,52 @@ export const SettingsScreen = () => {
   const fontFamily = useStore(settingsStore, (s) => s.fontFamily);
   const captionsMode = useStore(settingsStore, (s) => s.captionsMode);
   const anthropicKeyConfigured = useStore(settingsStore, (s) => s.anthropicKeyConfigured);
+  const voiceEnabled = useStore(settingsStore, (s) => s.voiceEnabled);
+  const hapticsEnabled = useStore(settingsStore, (s) => s.hapticsEnabled);
+
+  const nextCaptionsMode = (m: CaptionsMode): CaptionsMode => {
+    if (m === CaptionsMode.AlwaysOn) {
+      return CaptionsMode.On;
+    }
+    if (m === CaptionsMode.On) {
+      return CaptionsMode.Off;
+    }
+    return CaptionsMode.AlwaysOn;
+  };
 
   return (
     <Screen accessibilityLabel="Settings screen">
       <Heading>Settings</Heading>
       <Body muted>Accessibility and provider configuration.</Body>
+
+      <Card accessibilityLabel="Sound and notifications card">
+        <Body>Sound &amp; Notifications</Body>
+        <Body muted>
+          Sound and haptics are off by default. Turn them on for spoken verdicts and vibration
+          feedback.
+        </Body>
+        <Button
+          mode={ButtonMode.Secondary}
+          onPress={() => settingsStore.getState().setVoiceEnabled(!voiceEnabled)}
+          accessibilityLabel={voiceEnabled ? "Disable voice output" : "Enable voice output"}
+        >
+          {voiceEnabled ? "Voice: On" : "Voice: Off"}
+        </Button>
+        <Button
+          mode={ButtonMode.Secondary}
+          onPress={() => settingsStore.getState().setHapticsEnabled(!hapticsEnabled)}
+          accessibilityLabel={hapticsEnabled ? "Disable haptics" : "Enable haptics"}
+        >
+          {hapticsEnabled ? "Haptics: On" : "Haptics: Off"}
+        </Button>
+        <Button
+          mode={ButtonMode.Secondary}
+          onPress={() => settingsStore.getState().setCaptionsMode(nextCaptionsMode(captionsMode))}
+          accessibilityLabel={`Captions mode: ${captionsLabel(captionsMode)}. Tap to cycle.`}
+        >
+          Captions: {captionsLabel(captionsMode)}
+        </Button>
+      </Card>
 
       <Card accessibilityLabel="Theme card">
         <Body>Theme — {themeLabel(themeId)}</Body>
@@ -81,11 +123,13 @@ export const SettingsScreen = () => {
 
       <AnthropicKeyField />
 
+      <Heading>Camera &amp; Location</Heading>
+      <PermissionsCard />
+
       <ListItem
         title="Provider"
         description={`anthropic · ${anthropicKeyConfigured ? "configured" : "not configured"}`}
       />
-      <ListItem title="Captions" description={captionsLabel(captionsMode)} />
       <Body muted>
         Settings are in-memory until `make-device-sqlite-adapter` lands persistence.
       </Body>

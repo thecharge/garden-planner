@@ -19,7 +19,8 @@ export const Heading = ({ children }: HeadingProps) => {
         fontSize: HEADING_FONT_SIZE,
         lineHeight: HEADING_LINE_HEIGHT,
         color: tokens.colors.onSurface,
-        fontWeight: "700",
+        flexShrink: 1,
+        minWidth: 0,
         marginBottom: 8
       }}
     >

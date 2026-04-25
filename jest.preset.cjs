@@ -26,6 +26,12 @@ module.exports = {
     "!src/__mocks__/**"
   ],
   coverageReporters: ["text", "lcov", "html"],
+  coverageThreshold: {
+    global: {
+      lines: 70,
+      functions: 80
+    }
+  },
   clearMocks: true,
   restoreMocks: true
 };

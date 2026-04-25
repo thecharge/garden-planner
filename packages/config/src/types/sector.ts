@@ -11,6 +11,8 @@ export type Sector = {
   readonly name: string;
   readonly polygon: ReadonlyArray<GeoPoint>;
   readonly createdAt: string;
+  readonly slopeDegree?: number;
+  readonly orientationDegrees?: number;
 };
 
 export type Harvest = {

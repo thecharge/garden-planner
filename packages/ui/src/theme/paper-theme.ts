@@ -36,7 +36,7 @@ const fontVariants = (tokens: ThemeTokens): PaperMd3Theme["fonts"] => {
     fontFamily: tokens.typography.bodyFontFamily,
     fontSize: tokens.typography.bodyFontSizeSp,
     lineHeight: tokens.typography.bodyFontSizeSp * tokens.typography.lineHeight,
-    letterSpacing: tokens.typography.letterSpacingEm
+    letterSpacing: tokens.typography.letterSpacingEm * tokens.typography.bodyFontSizeSp
   };
   return {
     bodySmall: body,

@@ -45,7 +45,9 @@ export const Caption = ({ children, variant }: CaptionProps) => {
           fontFamily: tokens.typography.bodyFontFamily,
           fontSize: CAPTION_FONT_SIZE,
           lineHeight: CAPTION_FONT_SIZE * tokens.typography.lineHeight,
-          color: fg
+          color: fg,
+          flexShrink: 1,
+          minWidth: 0
         }}
       >
         {children}

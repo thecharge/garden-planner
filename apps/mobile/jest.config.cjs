@@ -25,7 +25,8 @@ module.exports = {
     "^@garden/ui/(.*)$": "<rootDir>/../../packages/ui/src/$1",
     "^@/(.*)$": "<rootDir>/src/$1",
     "^react-native$": "<rootDir>/src/__mocks__/react-native.tsx",
-    "^react-native-safe-area-context$": "<rootDir>/src/__mocks__/react-native-safe-area-context.tsx",
+    "^react-native-safe-area-context$":
+      "<rootDir>/src/__mocks__/react-native-safe-area-context.tsx",
     "^expo-router$": "<rootDir>/src/__mocks__/expo-router.tsx",
     "^expo-secure-store$": "<rootDir>/src/__mocks__/expo-secure-store.ts",
     "^expo-clipboard$": "<rootDir>/src/__mocks__/expo-clipboard.ts",
@@ -38,7 +39,8 @@ module.exports = {
     "^expo-file-system/legacy$": "<rootDir>/src/__mocks__/expo-file-system.ts",
     "^expo-sharing$": "<rootDir>/src/__mocks__/expo-sharing.ts",
     "^expo-splash-screen$": "<rootDir>/src/__mocks__/expo-splash-screen.ts",
-    "^@expo/vector-icons$": "<rootDir>/src/__mocks__/@expo/vector-icons.tsx"
+    "^@expo/vector-icons$": "<rootDir>/src/__mocks__/@expo/vector-icons.tsx",
+    "^react-i18next$": "<rootDir>/src/__mocks__/react-i18next.ts"
   },
   clearMocks: true,
   restoreMocks: true

@@ -1,6 +1,11 @@
 import { createElement } from "react";
 import { act } from "react-test-renderer";
-import { findByAccessibilityLabel, flush, renderWithProviders } from "@/__tests__/test-utils";
+import {
+  findByAccessibilityLabel,
+  findTextContents,
+  flush,
+  renderWithProviders
+} from "@/__tests__/test-utils";
 import { RecordForm } from "@/features/inventory/components/record-form";
 import { getMemoryRepository, __resetMemoryRepositoryForTests } from "@/core/query/repository";
 import { InventoryKind } from "@garden/config";
@@ -17,7 +22,7 @@ describe("RecordForm", () => {
       submit.props.onPress();
     });
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("Name is required");
   });
 
@@ -31,7 +36,7 @@ describe("RecordForm", () => {
       submit.props.onPress();
     });
     await flush();
-    const texts = tree.root.findAllByType("Text").map((t) => t.children.join(""));
+    const texts = findTextContents(tree);
     expect(texts).toContain("Quantity must be greater than zero");
   });
 

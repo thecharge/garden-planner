@@ -15,7 +15,9 @@ export const Body = ({ children, muted = false }: BodyProps) => {
         fontFamily: tokens.typography.bodyFontFamily,
         fontSize: tokens.typography.bodyFontSizeSp,
         lineHeight: tokens.typography.bodyFontSizeSp * tokens.typography.lineHeight,
-        letterSpacing: tokens.typography.letterSpacingEm,
+        letterSpacing: tokens.typography.letterSpacingEm * tokens.typography.bodyFontSizeSp,
+        flexShrink: 1,
+        minWidth: 0,
         color: muted ? tokens.colors.onMuted : tokens.colors.onSurface
       }}
     >

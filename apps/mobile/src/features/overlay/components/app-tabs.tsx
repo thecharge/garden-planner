@@ -3,6 +3,7 @@ import { Feather } from "@expo/vector-icons";
 import { useThemeTokens } from "@garden/ui";
 
 const FeatherIcon = {
+  Home: "home",
   Camera: "camera",
   Grid: "grid",
   BarChart: "bar-chart-2",
@@ -24,6 +25,7 @@ const tabs: ReadonlyArray<{
   readonly title: string;
   readonly icon: FeatherIcon;
 }> = [
+  { name: "home", title: "Home", icon: FeatherIcon.Home },
   { name: "capture", title: "Capture", icon: FeatherIcon.Camera },
   { name: "sectors", title: "Sectors", icon: FeatherIcon.Grid },
   { name: "yield", title: "Yield", icon: FeatherIcon.BarChart },

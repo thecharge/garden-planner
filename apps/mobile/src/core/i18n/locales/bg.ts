@@ -85,5 +85,37 @@ export const bg: TranslationKeys = {
       "We scan your plot with the camera, listen for your intent with the microphone, and use location to compute setbacks and climate fallbacks. Nothing leaves the phone without your consent.",
     // TODO(bg): native translation needed
     grant: "Grant permissions"
+  },
+  home: {
+    // TODO(bg): native translation needed
+    title: "Garden Planner",
+    // TODO(bg): native translation needed
+    tagline: "Your plot at a glance.",
+    // TODO(bg): native translation needed
+    tapToScan: "Tap to scan",
+    // TODO(bg): native translation needed
+    scanHint: "Point the camera at the ground and tap Scan to analyse your plot.",
+    // TODO(bg): native translation needed
+    sectorCountOne: "{{count}} sector on this plot",
+    // TODO(bg): native translation needed
+    sectorCountOther: "{{count}} sectors on this plot",
+    // TODO(bg): native translation needed
+    noSectors: "No sectors yet",
+    // TODO(bg): native translation needed
+    noSectorsHint: "Add your first sector on the Sectors tab, or scan a new one.",
+    // TODO(bg): native translation needed
+    viewSectors: "View sectors",
+    // TODO(bg): native translation needed
+    slopeLabel: "last slope",
+    // TODO(bg): native translation needed
+    sectorsLabel: "sectors",
+    // TODO(bg): native translation needed
+    capture: "Capture",
+    // TODO(bg): native translation needed
+    yield: "Yield",
+    // TODO(bg): native translation needed
+    settings: "Settings",
+    // TODO(bg): native translation needed
+    loading: "Loading sectors…"
   }
 };

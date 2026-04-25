@@ -14,6 +14,7 @@ import {
   useThemeTokens
 } from "@garden/ui";
 import { SmepError } from "@garden/config";
+import type { Protocol } from "@garden/config";
 import { summary } from "@garden/core";
 import { useCapturePermissions } from "../hooks/use-capture-permissions";
 import { useComplianceVerdict } from "../hooks/use-compliance-verdict";
@@ -21,9 +22,12 @@ import { captureProtocol, expoLocationAdapter, expoMotionAdapter } from "@/engin
 import { createLogger } from "@/core/logger";
 import { useAnnounce } from "@/core/announce";
 import { config } from "@/core/config";
+import { useSaveSector } from "@/features/sectors";
+import { CreateSectorSheet } from "./create-sector-sheet";
 
 const log = createLogger("capture-screen");
 const VIEWFINDER_HEIGHT = 260;
+const DEFAULT_PLOT_ID = "plot-a";
 
 export const CaptureScreen = () => {
   const tokens = useThemeTokens();
@@ -32,9 +36,12 @@ export const CaptureScreen = () => {
   const verdict = useComplianceVerdict();
   const announce = useAnnounce();
   const isFocused = useIsFocused();
+  const saveSector = useSaveSector(DEFAULT_PLOT_ID);
   const [propertyLineMeters, setPropertyLineMeters] = useState<string>("");
   const [scanBusy, setScanBusy] = useState(false);
   const [viewfinderOpen, setViewfinderOpen] = useState(false);
+  const [lastProtocol, setLastProtocol] = useState<Protocol | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const onScan = useCallback(async () => {
     if (!perms.allGranted || scanBusy) {
@@ -49,7 +56,10 @@ export const CaptureScreen = () => {
           : undefined;
       const protocol = await captureProtocol(
         { motion: expoMotionAdapter, location: expoLocationAdapter },
-        { windowMs: config.CAPTURE_WINDOW_MS, propertyLineDistanceMeters }
+        {
+          windowMs: config.CAPTURE_WINDOW_MS,
+          ...(propertyLineDistanceMeters !== undefined ? { propertyLineDistanceMeters } : {})
+        }
       );
       log.info("scan produced protocol", {
         id: protocol.id,
@@ -57,6 +67,7 @@ export const CaptureScreen = () => {
         hasLine: protocol.data.distanceToPropertyLine !== undefined
       });
       verdict.mutate(protocol);
+      setLastProtocol(protocol);
       setViewfinderOpen(false);
     } catch (err) {
       const message =
@@ -175,6 +186,37 @@ export const CaptureScreen = () => {
           <Body muted>{String(verdict.data.meta.reference ?? "")}</Body>
         </Card>
       ) : null}
+
+      {lastProtocol ? (
+        <Button
+          mode={ButtonMode.Secondary}
+          onPress={() => setSheetOpen(true)}
+          accessibilityLabel="Create sector from this scan"
+        >
+          Create sector from this scan
+        </Button>
+      ) : null}
+
+      <CreateSectorSheet
+        protocol={sheetOpen ? lastProtocol : null}
+        onConfirm={(name, protocol) => {
+          saveSector.mutate({
+            id: `sector-${protocol.id}`,
+            plotId: DEFAULT_PLOT_ID,
+            name,
+            polygon: [],
+            createdAt: protocol.capturedAt,
+            ...(protocol.data.slopeDegree !== undefined
+              ? { slopeDegree: protocol.data.slopeDegree }
+              : {}),
+            ...(protocol.data.orientationDegrees !== undefined
+              ? { orientationDegrees: protocol.data.orientationDegrees }
+              : {})
+          });
+          setSheetOpen(false);
+        }}
+        onCancel={() => setSheetOpen(false)}
+      />
     </Screen>
   );
 };
