@@ -40,7 +40,8 @@ module.exports = {
     "^expo-sharing$": "<rootDir>/src/__mocks__/expo-sharing.ts",
     "^expo-splash-screen$": "<rootDir>/src/__mocks__/expo-splash-screen.ts",
     "^@expo/vector-icons$": "<rootDir>/src/__mocks__/@expo/vector-icons.tsx",
-    "^react-i18next$": "<rootDir>/src/__mocks__/react-i18next.ts"
+    "^react-i18next$": "<rootDir>/src/__mocks__/react-i18next.ts",
+    "^expo-sqlite$": "<rootDir>/src/__mocks__/expo-sqlite.ts"
   },
   clearMocks: true,
   restoreMocks: true
