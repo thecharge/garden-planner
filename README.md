@@ -1,8 +1,10 @@
 # Garden Planner
 
-Garden Planner is an Android app for small home growers and farmers: photograph your plot, keep a harvest log, and get science-backed rotation and watering advice — all without internet or subscriptions. Built for growers in Chepinci (Sofia basin, Bulgaria) but usable anywhere.
+Garden Planner is an Android app for small home growers and farmers. Point your phone at a garden bed, keep a harvest log, and get science-backed rotation and watering advice — all without internet or subscriptions. Works offline, no internet needed. Built for growers in Chepinci (Sofia basin, Bulgaria) but usable anywhere.
 
-<!-- TODO: add 30-second demo video -->
+> **Note:** Bulgarian language support is currently showing placeholder text — a native translation is in progress.
+
+> **Demo video:** [Watch the end-to-end walkthrough](docs/demo/end-to-end.mp4)
 
 ## What can I do today?
 
@@ -11,15 +13,17 @@ Garden Planner is an Android app for small home growers and farmers: photograph 
 - ✅ **Log a harvest** — open a sector, tap "Log harvest", enter the weight. The app keeps a running history per bed and per crop.
 - ✅ **See year-over-year yield** — the Yield tab shows a two-column comparison of this year vs last year, with a CSV export you can share.
 - ✅ **Get a rotation recommendation** — the Rotation tab tells you which crop family to plant next in each bed and why, citing agronomic sources.
-- ✅ **Check your irrigation target** — the Nutrient tab calculates a weekly watering target in millimetres using the FAO-56 formula.
+- ✅ **Check your irrigation target** — the Nutrient tab calculates a weekly watering target in millimetres using a scientific formula (FAO-56) that estimates how much water your plants need.
 - ✅ **Hear verdicts spoken aloud** — every action is announced via text-to-speech, a caption bar, and a haptic vibration. All three channels can be turned on or off in Settings.
 - ✅ **Control permissions and sound in Settings** — the Settings screen shows camera and location permission status and lets you grant them from one place. Sound is off by default; turn it on whenever you are ready.
+
+> **Note:** App data is stored in memory only. It will be lost if you reinstall the app. Permanent storage is in progress.
 
 ---
 
 > **Reality check.** This README describes what actually ships. Read **[docs/STATUS.md](docs/STATUS.md)** before trusting any claim — it is the ground truth with `file:line` evidence. If the two disagree, STATUS wins.
 >
-> Shipped today (tested, reproducible on emulator): sectors CRUD, harvest log, **real two-column year-over-year yield table with CSV export**, inventory records + events, rotation advisor, FAO-56 irrigation target, Anthropic BYOK paste-and-save, theme live-switch, **real camera capture (expo-camera + DeviceMotion + Location) gated behind a permissions rationale screen**, **voice output (TTS + haptics + persistent caption bar) fired on every mutation**, splash-screen handshake, **home dashboard**, **capture-to-sector flow**, **sound opt-in**, **permissions card in Settings**.
+> Shipped today (tested, reproducible on emulator): sectors CRUD, harvest log, **real two-column year-over-year yield table with CSV export**, inventory records + events, rotation advisor, irrigation target (using a scientific formula, FAO-56, that estimates how much water your plants need), paste your own Anthropic AI key, theme live-switch, **real camera capture (expo-camera + your phone's motion sensors + Location) gated behind a permissions rationale screen**, **voice output (TTS + haptics + persistent caption bar) fired on every mutation**, splash-screen handshake, **home dashboard**, **capture-to-sector flow**, **sound opt-in**, **permissions card in Settings**.
 >
 > Designed but **not yet wired** (tracked in OpenSpec changes): STT voice input (`make-voice-stt-real`), Skia/Reanimated overlays (`make-spatial-overlay-real`), SQLite persistence (`make-device-sqlite-adapter`), native BG translations (reviewer sign-off).
 
@@ -66,12 +70,12 @@ A standard SaaS garden planner lets you drag cartoon trees over a 2D grid and as
 
 Each bullet below is tagged: ✅ works today, 🟡 partial, 🔴 designed but not yet implemented. See [STATUS.md](docs/STATUS.md) for evidence.
 
-- ✅ **Spatial capture** — opt-in live `<CameraView>`, 2-second DeviceMotion window fuses pitch + heading into a real `Protocol`. No property-line distance pin means the compliance engine routes to `actionRequired` honestly instead of fabricating a verdict. Viewfinder is focus-gated and auto-closes after a scan so the app opens without streaming a frame. See `docs/screenshots/capture-opt-in.png`.
-- ✅ **Compliance engine** — Sofia-basin setback / slope / water-table rules; every verdict cites its source. Pure-engine, tested. Every scan feeds a real Protocol now, not a mock.
-- ✅ **Rotation + irrigation advisor** — science-backed (crop families, FAO-56 Penman-Monteith ET₀, Kc stage curves). 🟡 Liebig amendment UI is still a stub.
-- ✅ **Voice output** — `announce()` fires TTS (`expo-speech`) + caption bar (Zustand store mounted in the root gate) + haptic (`expo-haptics`) on every mutation. Each channel is gated by an independent Settings toggle. 🔴 **STT input is not wired** — Scan is tap-driven today; Vosk/whisper.cpp integration lives in `make-voice-stt-real`.
+- ✅ **Spatial capture** — opt-in live camera view, 2-second window using your phone's motion sensors (tilt and compass) fuses pitch + heading into a real scan result. No property-line distance pin means the compliance engine routes to `actionRequired` honestly instead of fabricating a verdict. Viewfinder is focus-gated and auto-closes after a scan so the app opens without streaming a frame. See `docs/screenshots/capture-opt-in.png`.
+- ✅ **Compliance engine** — Sofia-basin setback / slope / water-table rules; every verdict cites its source. Pure-engine, tested. Every scan feeds a real scan result now, not a mock.
+- ✅ **Rotation + irrigation advisor** — science-backed (crop families, a scientific formula (FAO-56) used to estimate how much water plants need, Kc stage curves). 🟡 Fertilizer and soil amendment suggestions UI is still a stub.
+- ✅ **Voice output** — `announce()` fires TTS (`expo-speech`) + caption bar + haptic (`expo-haptics`) on every mutation. Each channel is gated by an independent Settings toggle. 🔴 **STT input is not wired** — Scan is tap-driven today; Vosk/whisper.cpp integration lives in `make-voice-stt-real`.
 - ✅ **Accessibility tokens** — neutral pastel + dark + AAA high-contrast; Lexend default / OpenDyslexic opt-in; contrast audited in CI. Cross-modal contract is fired for every mutation hook.
-- 🟡 **Local-first, BYOK** — today the notebook is an **in-memory `Map`** (lost on reinstall); SQLite adapter tracked in `make-device-sqlite-adapter`. Anthropic key _is_ persisted in `expo-secure-store` (paste + mask + clear all shipped).
+- 🟡 **Works offline, no internet needed — paste your own Anthropic AI key** — today the notebook is an **in-memory `Map`** (lost on reinstall); SQLite adapter tracked in `make-device-sqlite-adapter`. Anthropic key _is_ persisted in `expo-secure-store` (paste + mask + clear all shipped).
 
 ## User flows that actually work today
 
@@ -214,8 +218,8 @@ In priority order, with OpenSpec change IDs where a design already exists:
 
 1. **`make-voice-stt-real`** — Vosk/whisper.cpp into `useVoiceLoop`. Removes the last tap-only dependency from the capture flow.
 2. **`make-device-sqlite-adapter`** — `expo-sqlite` behind `SqliteLike` with numbered migrations. Closes the "data resets on reinstall" gap.
-3. **`make-spatial-overlay-real`** — ship `apps/mobile/src/engine/skia/` + `engine/reanimated/` to consume the pose-throttle output the capture driver already populates. Finally paints the green/red compliance boundary on the viewfinder.
-4. **Liebig amendment UI** — irrigation card is live; the amendment/demand diff card is a stub. Engine-side math exists.
+3. **`make-spatial-overlay-real`** — ship the visual map overlay (coming soon) to consume the pose-throttle output the capture driver already populates. Finally paints the green/red compliance boundary on the viewfinder.
+4. **Fertilizer and soil amendment suggestions UI** — irrigation card is live; the amendment/demand diff card is a stub. Engine-side math exists.
 5. **Native BG translations** — strings mirror EN with `// TODO(bg)` markers. Needs a named reviewer in `ACCESSIBILITY.md`.
 6. **Agronomist sign-off** on `packages/engine/src/data/species.ts` + `nutrient/species-demand.ts` — science is cited per row; still not peer-reviewed.
 
