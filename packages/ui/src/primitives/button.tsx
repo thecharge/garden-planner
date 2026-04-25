@@ -11,7 +11,7 @@ export type GardenButtonProps = {
   readonly mode?: ButtonMode;
   readonly disabled?: boolean;
   readonly loading?: boolean;
-  readonly accessibilityLabel?: string;
+  readonly accessibilityLabel: string;
 };
 
 export const Button = ({
@@ -34,7 +34,7 @@ export const Button = ({
       onPress={onPress}
       disabled={isDisabled}
       accessibilityRole="button"
-      {...(accessibilityLabel ? { accessibilityLabel } : {})}
+      accessibilityLabel={accessibilityLabel}
       style={({ pressed }) => ({
         opacity: isDisabled ? 0.5 : pressed ? 0.8 : 1,
         alignSelf: "stretch"

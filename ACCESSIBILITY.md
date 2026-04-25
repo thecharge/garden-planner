@@ -12,13 +12,20 @@ The baseline commitments are laid out in the `accessibility` capability spec (`o
 
 ## Reviewer sign-off ledger
 
-The release checklist requires at minimum:
+The release checklist requires at minimum one reviewer per persona listed below. Each reviewer must:
 
-| Reviewer kind          | Name               | Role | Date reviewed | Result |
-| ---------------------- | ------------------ | ---- | ------------- | ------ |
-| Dyslexic reader        | _not yet recorded_ | —    | —             | —      |
-| Low-vision reader      | _not yet recorded_ | —    | —             | —      |
-| Deaf / hard-of-hearing | _not yet recorded_ | —    | —             | —      |
+1. Install the latest APK on a physical Android device (not an emulator).
+2. Work through the checklist for their persona in the section below.
+3. Record their name, role, date, and result in the table.
+4. Open a pull request or email the project maintainer with evidence (screenshots, notes).
+
+Until every row is filled, **the app must not be tagged as a public release**. To volunteer as a reviewer, contact the project maintainer.
+
+| Reviewer kind          | Name                                                                                                                | Role | Date reviewed | Result |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- | ---- | ------------- | ------ |
+| Dyslexic reader        | Reviewer: TBD — sign-off required before public release. Contact the project maintainer to volunteer as a reviewer. | —    | —             | —      |
+| Low-vision reader      | Reviewer: TBD — sign-off required before public release. Contact the project maintainer to volunteer as a reviewer. | —    | —             | —      |
+| Deaf / hard-of-hearing | Reviewer: TBD — sign-off required before public release. Contact the project maintainer to volunteer as a reviewer. | —    | —             | —      |
 
 Until every row above is filled, **the app must not be tagged as a public release**.
 

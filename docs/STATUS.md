@@ -1,5 +1,7 @@
 # STATUS — what actually works, what doesn't
 
+**What works today:** you can scan your garden, create beds, log harvests, check yearly yield, manage inventory, and adjust settings. App data is stored in memory only — it will be lost if you reinstall the app. Permanent storage is in progress.
+
 **Last reality-check: 2026-04-24.** This file is the ground truth. The README is
 marketing-adjacent; this file is what shipped. If the two disagree, the README
 is wrong and this file wins.

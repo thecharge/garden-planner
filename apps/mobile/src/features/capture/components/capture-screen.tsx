@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { CameraView } from "expo-camera";
 import { useIsFocused, useRouter } from "expo-router";
@@ -42,12 +42,21 @@ export const CaptureScreen = () => {
   const [viewfinderOpen, setViewfinderOpen] = useState(false);
   const [lastProtocol, setLastProtocol] = useState<Protocol | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const activeControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (!isFocused) {
+      activeControllerRef.current?.abort();
+    }
+  }, [isFocused]);
 
   const onScan = useCallback(async () => {
     if (!perms.allGranted || scanBusy) {
       return;
     }
     setScanBusy(true);
+    const controller = new AbortController();
+    activeControllerRef.current = controller;
     try {
       const pinned = Number(propertyLineMeters);
       const propertyLineDistanceMeters =
@@ -58,6 +67,7 @@ export const CaptureScreen = () => {
         { motion: expoMotionAdapter, location: expoLocationAdapter },
         {
           windowMs: config.CAPTURE_WINDOW_MS,
+          signal: controller.signal,
           ...(propertyLineDistanceMeters !== undefined ? { propertyLineDistanceMeters } : {})
         }
       );
@@ -80,6 +90,7 @@ export const CaptureScreen = () => {
       });
       void announce(summary.actionRequired(message));
     } finally {
+      activeControllerRef.current = null;
       setScanBusy(false);
     }
   }, [perms.allGranted, scanBusy, propertyLineMeters, verdict, announce]);

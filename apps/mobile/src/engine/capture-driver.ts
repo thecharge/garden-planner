@@ -35,6 +35,7 @@ export type CaptureOptions = {
   readonly waterTableDepthMeters?: number;
   readonly protocolId?: string;
   readonly now?: () => number;
+  readonly signal?: AbortSignal;
 };
 
 export type CaptureDeps = {
@@ -75,6 +76,10 @@ export const captureProtocol = async (
     throw SmepErrors.captureTooShort();
   }
 
+  if (opts.signal?.aborted) {
+    throw SmepErrors.captureTooShort();
+  }
+
   const pitchSamples: number[] = [];
   const headingSamples: number[] = [];
   deps.motion.setUpdateInterval(100);
@@ -88,6 +93,12 @@ export const captureProtocol = async (
   });
   const locationPromise = deps.location.fetchOnce(3000);
   await sleep(windowMs);
+
+  if (opts.signal?.aborted) {
+    unsubscribe();
+    throw SmepErrors.captureTooShort();
+  }
+
   unsubscribe();
 
   if (pitchSamples.length === 0) {

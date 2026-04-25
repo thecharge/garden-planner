@@ -63,3 +63,5 @@ genkey
 keyalg
 keysize
 millimetres
+analyse
+ellipsize

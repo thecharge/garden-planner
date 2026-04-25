@@ -170,7 +170,11 @@ describe("Button", () => {
     const tree = render(
       withTheme(
         ThemeId.LightPastel,
-        createElement(Button, { onPress, mode: ButtonMode.Primary }, "Scan")
+        createElement(
+          Button,
+          { onPress, mode: ButtonMode.Primary, accessibilityLabel: "Scan action" },
+          "Scan"
+        )
       )
     );
     const pressable = tree.root.findByType("Pressable");
@@ -188,7 +192,11 @@ describe("Button", () => {
     const tree = render(
       withTheme(
         ThemeId.LightPastel,
-        createElement(Button, { onPress, mode: ButtonMode.Secondary }, "Cancel")
+        createElement(
+          Button,
+          { onPress, mode: ButtonMode.Secondary, accessibilityLabel: "Cancel action" },
+          "Cancel"
+        )
       )
     );
     const views = tree.root.findAllByType("View");
@@ -202,13 +210,32 @@ describe("Button", () => {
     const tree = render(
       withTheme(
         ThemeId.LightPastel,
-        createElement(Button, { onPress: () => undefined, mode: ButtonMode.Text }, "X")
+        createElement(
+          Button,
+          { onPress: () => undefined, mode: ButtonMode.Text, accessibilityLabel: "X action" },
+          "X"
+        )
       )
     );
     const views = tree.root.findAllByType("View");
     const inner = views[0]!;
     expect(inner.props.style.backgroundColor).toBe("transparent");
     expect(inner.props.style.borderWidth).toBeGreaterThan(0); // uses outlined border on non-primary
+  });
+
+  it("forwards accessibilityLabel to the underlying Pressable", () => {
+    const tree = render(
+      withTheme(
+        ThemeId.LightPastel,
+        createElement(
+          Button,
+          { onPress: () => undefined, mode: ButtonMode.Primary, accessibilityLabel: "Submit form" },
+          "Submit"
+        )
+      )
+    );
+    const pressable = tree.root.findByType("Pressable");
+    expect(pressable.props.accessibilityLabel).toBe("Submit form");
   });
 });
 

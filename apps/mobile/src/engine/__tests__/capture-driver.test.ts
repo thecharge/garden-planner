@@ -89,4 +89,47 @@ describe("captureProtocol", () => {
     );
     expect(p.data.slopeDegree).toBeCloseTo(17.188, 2); // only the finite 0.3 counted
   });
+
+  it("abort: pre-aborted signal means subscribe is never called", async () => {
+    const subscribeMock = jest.fn((_onSample: (s: MotionSample) => void) => () => undefined);
+    const motion: MotionAdapter = {
+      isAvailable: async () => true,
+      setUpdateInterval: () => undefined,
+      subscribe: subscribeMock
+    };
+    const controller = new AbortController();
+    controller.abort();
+    await expect(
+      captureProtocol(
+        { motion, location: fixedLocation },
+        { windowMs: 5, signal: controller.signal }
+      )
+    ).rejects.toBeInstanceOf(SmepError);
+    expect(subscribeMock).not.toHaveBeenCalled();
+  });
+
+  it("abort: aborting after subscribe causes unsubscribe and no result", async () => {
+    let capturedOnSample: ((s: MotionSample) => void) | null = null;
+    const unsubscribeMock = jest.fn();
+    const motion: MotionAdapter = {
+      isAvailable: async () => true,
+      setUpdateInterval: () => undefined,
+      subscribe: (onSample) => {
+        capturedOnSample = onSample;
+        return unsubscribeMock;
+      }
+    };
+    const controller = new AbortController();
+    const capturePromise = captureProtocol(
+      { motion, location: fixedLocation },
+      { windowMs: 50, signal: controller.signal }
+    );
+    await Promise.resolve();
+    if (capturedOnSample) {
+      (capturedOnSample as (s: MotionSample) => void)({ pitchRad: 0.2 });
+    }
+    controller.abort();
+    await expect(capturePromise).rejects.toBeInstanceOf(SmepError);
+    expect(unsubscribeMock).toHaveBeenCalled();
+  });
 });
