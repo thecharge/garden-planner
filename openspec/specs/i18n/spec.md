@@ -62,3 +62,13 @@ New user-facing strings added under `apps/mobile/src/features/` SHALL go through
 - **WHEN** the team attempts to tag a public release
 - **THEN** the release checklist MUST call out the empty BG row
 - **AND** the release MUST NOT be tagged public until a translator is recorded
+
+### Requirement: README notes that Bulgarian translation is a work in progress
+
+`README.md` SHALL include a note (in the introductory or language section) that the Bulgarian locale currently displays English text and that a native-speaker translation is planned.
+
+#### Scenario: Bulgarian users are not misled
+
+- **WHEN** a Bulgarian-speaking user reads `README.md`
+- **THEN** they SHALL find a note explaining that the app is not yet available in Bulgarian and that translation is in progress
+- **AND** no claim SHALL be made that the app is "fully available in Bulgarian"
